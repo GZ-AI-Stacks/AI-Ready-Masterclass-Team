@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prompt-Generator 100 — AI Ready Masterclass</title>
+<style>
+@font-face{font-family:'Sora';font-weight:400;font-display:swap;src:url('fonts/sora-latin-400-normal.woff2') format('woff2')}
+@font-face{font-family:'Sora';font-weight:500;font-display:swap;src:url('fonts/sora-latin-600-normal.woff2') format('woff2')}
+@font-face{font-family:'Sora';font-weight:700;font-display:swap;src:url('fonts/sora-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-weight:400;font-display:swap;src:url('fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-weight:700;font-display:swap;src:url('fonts/jetbrains-mono-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'Playfair Display';font-weight:700;font-display:swap;src:url('fonts/playfair-display-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'Playfair Display';font-weight:900;font-display:swap;src:url('fonts/playfair-display-latin-900-normal.woff2') format('woff2')}
+@font-face{font-family:'Playfair Display';font-style:italic;font-weight:400;font-display:swap;src:url('fonts/playfair-display-latin-400-italic.woff2') format('woff2')}
+</style>
+<style>
+/* ═══ RESET ═══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+/* ═══ THEME VARIABLES ═══ */
+:root {
+  --bg: #060a08; --bg2: #0c1210; --bg3: #111a16;
+  --text: #c8d6d0; --text-bright: #f0f7f4; --text-dim: #8a9e95;
+  --accent: #00ff88; --accent-dim: #00cc6a; --accent-glow: rgba(0,255,136,.12);
+  --border: rgba(255,255,255,.08); --card-bg: rgba(13,19,16,.95);
+  --input-bg: rgba(0,0,0,.4); --input-border: rgba(255,255,255,.12);
+  --copy-bg: rgba(0,255,136,.08); --copy-border: rgba(0,255,136,.2);
+  --font-body: 'Sora', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Playfair Display', serif;
+  --gold: #ffd700; --gold-dim: rgba(255,215,0,.15);
+  --radius: 12px; --focus: rgba(0,255,136,.5);
+}
+[data-theme="light"] {
+  --bg: #f5f6f8; --bg2: #ffffff; --bg3: #eceef2;
+  --text: #374151; --text-bright: #111827; --text-dim: #5b6370;
+  --accent: #059669; --accent-dim: #047857; --accent-glow: rgba(5,150,105,.08);
+  --border: rgba(0,0,0,.1); --card-bg: #ffffff;
+  --input-bg: #f9fafb; --input-border: rgba(0,0,0,.15);
+  --copy-bg: rgba(5,150,105,.04); --copy-border: rgba(5,150,105,.18);
+  --gold: #92400e; --gold-dim: rgba(146,64,14,.08); --focus: rgba(5,150,105,.5);
+}
+[data-theme="paper"] {
+  --bg: #f7f2ea; --bg2: #f0e9dd; --bg3: #e8dfd0;
+  --text: #5c4a3a; --text-bright: #3a2e23; --text-dim: #6d5e4e;
+  --accent: #b06820; --accent-dim: #955818; --accent-glow: rgba(176,104,32,.08);
+  --border: rgba(90,60,30,.12); --card-bg: #f7f2ea;
+  --input-bg: #f0e9dd; --input-border: rgba(90,60,30,.18);
+  --copy-bg: rgba(176,104,32,.05); --copy-border: rgba(176,104,32,.2);
+  --font-body: 'Playfair Display', serif; --gold: #7c5510; --gold-dim: rgba(124,85,16,.08);
+  --focus: rgba(176,104,32,.5);
+}
+[data-theme="midnight"] {
+  --bg: #0a0e1a; --bg2: #0f1526; --bg3: #151d33;
+  --text: #b8c4e0; --text-bright: #e4eaf5; --text-dim: #7484a6;
+  --accent: #818cf8; --accent-dim: #6366f1; --accent-glow: rgba(129,140,248,.1);
+  --border: rgba(255,255,255,.08); --card-bg: rgba(15,21,38,.95);
+  --input-bg: rgba(0,0,0,.3); --input-border: rgba(129,140,248,.18);
+  --copy-bg: rgba(129,140,248,.06); --copy-border: rgba(129,140,248,.2);
+  --gold: #fbbf24; --gold-dim: rgba(251,191,36,.1); --focus: rgba(129,140,248,.5);
+}
+
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--font-body); line-height: 1.7; font-size: 15px;
+  min-height: 100vh;
+}
+
+/* ═══ MODE OVERRIDES (higher specificity than theme) ═══ */
+body[data-mode="light"] {
+  --bg: #f5f6f8; --bg2: #ffffff; --bg3: #eceef2;
+  --text: #374151; --text-bright: #111827; --text-dim: #5b6370;
+  --border: rgba(0,0,0,.1); --card-bg: #ffffff;
+  --input-bg: #f9fafb; --input-border: rgba(0,0,0,.15);
+  --focus: rgba(0,0,0,.3);
+}
+body[data-mode="dark"] {
+  --bg: #060a08; --bg2: #0c1210; --bg3: #111a16;
+  --text: #c8d6d0; --text-bright: #f0f7f4; --text-dim: #8a9e95;
+  --border: rgba(255,255,255,.08); --card-bg: rgba(13,19,16,.95);
+  --input-bg: rgba(0,0,0,.4); --input-border: rgba(255,255,255,.12);
+  --focus: rgba(255,255,255,.3);
+}
+/* Accent contrast fixes per theme+mode */
+body[data-mode="light"][data-theme="neon"] { --accent: #059669; --accent-dim: #047857; --accent-glow: rgba(5,150,105,.1); --copy-bg: rgba(5,150,105,.05); --copy-border: rgba(5,150,105,.18); }
+body[data-mode="light"][data-theme="midnight"] { --accent: #4f46e5; --accent-dim: #4338ca; --accent-glow: rgba(79,70,229,.08); --copy-bg: rgba(79,70,229,.05); --copy-border: rgba(79,70,229,.18); }
+body[data-mode="dark"][data-theme="light"] { --accent: #34d399; --accent-dim: #10b981; --accent-glow: rgba(52,211,153,.1); --copy-bg: rgba(52,211,153,.06); --copy-border: rgba(52,211,153,.18); }
+body[data-mode="dark"][data-theme="paper"] { --accent: #f59e0b; --accent-dim: #d97706; --accent-glow: rgba(245,158,11,.08); --copy-bg: rgba(245,158,11,.05); --copy-border: rgba(245,158,11,.18); }
+
+/* ═══ FOCUS VISIBLE ═══ */
+:focus-visible {
+  outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* ═══ SKIP LINK ═══ */
+.skip-link {
+  position: absolute; top: -100%; left: 16px; z-index: 9999;
+  background: var(--accent); color: var(--bg); padding: 8px 20px;
+  border-radius: 0 0 8px 8px; font-weight: 700; font-size: 14px; text-decoration: none;
+}
+.skip-link:focus { top: 0; }
+
+/* ═══ LAYOUT ═══ */
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 300px; position: fixed; top: 0; left: 0; height: 100vh;
+  background: var(--bg2); border-right: 1px solid var(--border);
+  overflow-y: auto; z-index: 100; padding: 24px 0;
+  transition: transform .3s;
+}
+.main { margin-left: 300px; flex: 1; padding: 40px 48px; max-width: 920px; overflow-x: hidden; }
+
+/* ═══ SIDEBAR ═══ */
+.sb-brand { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.sb-badge { font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; font-weight: 700; }
+.sb-title { font-family: var(--font-display); font-size: 20px; font-weight: 900; color: var(--text-bright); margin: 6px 0; }
+.sb-count { font-size: 13px; color: var(--text-dim); }
+
+.sb-themes { padding: 8px 20px 16px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+.sb-themes-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 10px; font-weight: 700; }
+.sb-themes-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.theme-btn {
+  width: 100%; aspect-ratio: 1; border-radius: 8px; border: 2px solid var(--border);
+  cursor: pointer; position: relative; overflow: hidden; transition: all .2s;
+}
+.theme-btn:hover { transform: scale(1.08); }
+.theme-btn.active { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+.theme-btn[data-t="neon"] { background: linear-gradient(135deg, #060a08, #111a16); }
+.theme-btn[data-t="neon"]::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 14px; height: 3px; border-radius: 2px; background: #00ff88; }
+.theme-btn[data-t="light"] { background: linear-gradient(135deg, #f8f9fa, #e5e7eb); }
+.theme-btn[data-t="light"]::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 14px; height: 3px; border-radius: 2px; background: #059669; }
+.theme-btn[data-t="paper"] { background: linear-gradient(135deg, #faf6f0, #ede5d8); }
+.theme-btn[data-t="paper"]::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 14px; height: 3px; border-radius: 2px; background: #b06820; }
+.theme-btn[data-t="midnight"] { background: linear-gradient(135deg, #0a0e1a, #151d33); }
+.theme-btn[data-t="midnight"]::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 14px; height: 3px; border-radius: 2px; background: #818cf8; }
+
+.sb-search { padding: 0 16px 12px; }
+
+.sb-search input {
+  width: 100%; padding: 10px 14px; border-radius: 8px;
+  background: var(--input-bg); border: 1px solid var(--input-border);
+  color: var(--text-bright); font-family: var(--font-body); font-size: 14px;
+  outline: none; transition: border-color .2s;
+}
+.sb-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.sb-search input::placeholder { color: var(--text-dim); }
+
+.sb-nav { list-style: none; }
+.sb-module {
+  padding: 10px 20px; cursor: pointer; font-size: 14px;
+  color: var(--text-dim); transition: all .15s;
+  display: flex; align-items: center; gap: 10px; border: none; background: none;
+  width: 100%; text-align: left; font-family: inherit;
+}
+.sb-module:hover { background: var(--accent-glow); color: var(--text-bright); }
+.sb-module.active { color: var(--accent); background: var(--accent-glow); border-right: 3px solid var(--accent); font-weight: 700; }
+.sb-module .sb-icon { font-size: 18px; flex-shrink: 0; width: 26px; text-align: center; }
+.sb-module .sb-num { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-left: auto; }
+.sb-module.is-master .sb-num::before { content: '★ '; color: var(--gold); }
+
+/* ═══ CONTENT ═══ */
+.module-header {
+  margin-bottom: 36px; padding-bottom: 24px; border-bottom: 2px solid var(--border);
+}
+.module-header .mh-num { font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; font-weight: 700; }
+.module-header .mh-title { font-family: var(--font-display); font-size: 30px; font-weight: 900; color: var(--text-bright); margin: 8px 0; }
+.module-header .mh-master { font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; color: var(--gold); font-weight: 700; }
+.module-header .mh-count { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+
+.prompt-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 20px; overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.prompt-card:hover { border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.prompt-card[aria-expanded="true"] { border-color: var(--accent); box-shadow: 0 4px 24px var(--accent-glow); }
+
+.pc-header {
+  padding: 18px 24px; cursor: pointer; display: flex;
+  justify-content: space-between; align-items: center;
+  transition: background .15s; border: none; background: none;
+  width: 100%; text-align: left; font-family: inherit; color: inherit;
+}
+.pc-header:hover { background: var(--accent-glow); }
+.pc-left { display: flex; align-items: center; gap: 14px; }
+.pc-idx { font-family: var(--font-mono); font-size: 12px; color: var(--accent); min-width: 32px; font-weight: 700; }
+.pc-title { font-size: 15px; font-weight: 700; color: var(--text-bright); line-height: 1.4; }
+.pc-cat { font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.5px; color: var(--accent); margin-top: 2px; font-weight: 700; }
+.pc-toggle {
+  font-size: 20px; color: var(--text-dim); transition: transform .3s; flex-shrink: 0;
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+}
+.prompt-card[aria-expanded="true"] .pc-toggle { transform: rotate(45deg); color: var(--accent); }
+
+.pc-body { padding: 0 24px 24px; }
+.pc-body[hidden] { display: none; }
+
+/* ═══ FIELDS ═══ */
+.pc-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; font-weight: 700; }
+.field-input {
+  padding: 11px 14px; border-radius: 8px;
+  background: var(--input-bg); border: 1px solid var(--input-border);
+  color: var(--text-bright); font-family: var(--font-body); font-size: 14px;
+  outline: none; transition: all .2s; width: 100%;
+}
+.field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.field-input::placeholder { color: var(--text-dim); font-size: 12px; }
+
+/* ═══ ZOOM SYSTEM ═══ */
+.main { --zoom: 1; }
+.main[data-zoom="0.8"]  { --zoom: 0.8; }
+.main[data-zoom="0.9"]  { --zoom: 0.9; }
+.main[data-zoom="1"]    { --zoom: 1; }
+.main[data-zoom="1.1"]  { --zoom: 1.1; }
+.main[data-zoom="1.2"]  { --zoom: 1.2; }
+.main[data-zoom="1.3"]  { --zoom: 1.3; }
+
+.main .module-header .mh-title { font-size: calc(30px * var(--zoom)); }
+.main .module-header .mh-num { font-size: calc(12px * var(--zoom)); }
+.main .module-header .mh-count { font-size: calc(14px * var(--zoom)); }
+.main .pc-title { font-size: calc(15px * var(--zoom)); }
+.main .pc-cat { font-size: calc(10px * var(--zoom)); }
+.main .pc-idx { font-size: calc(12px * var(--zoom)); }
+.main .field-label { font-size: calc(11px * var(--zoom)); }
+.main .field-input { font-size: calc(14px * var(--zoom)); padding: calc(11px * var(--zoom)) calc(14px * var(--zoom)); }
+.main .pc-preview { font-size: calc(13px * var(--zoom)); padding: calc(20px * var(--zoom)); line-height: calc(2 * var(--zoom) + 0.2); }
+.main .pc-copy { font-size: calc(12px * var(--zoom)); padding: calc(12px * var(--zoom)) 20px; }
+.main .pc-tip { font-size: calc(13px * var(--zoom)); }
+
+/* ═══ TOOLBAR ═══ */
+.toolbar {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 10px 0; margin: -40px -48px 28px; padding-left: 48px; padding-right: 48px;
+  display: flex; align-items: center; justify-content: flex-end; gap: 6px;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.tb-group {
+  display: flex; align-items: center; gap: 2px;
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 3px;
+}
+.tb-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 6px;
+  border: none; background: none; cursor: pointer;
+  color: var(--text-dim); font-size: 16px; font-family: var(--font-mono);
+  transition: all .15s;
+}
+.tb-btn:hover { background: var(--accent-glow); color: var(--text-bright); }
+.tb-btn:active { transform: scale(.95); }
+.tb-btn.active { background: var(--accent-glow); color: var(--accent); }
+.tb-label {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: var(--text-dim); min-width: 36px; text-align: center; user-select: none;
+}
+.tb-divider { width: 1px; height: 20px; background: var(--border); margin: 0 8px; }
+
+/* ═══ DARK MODE ICON SWAP ═══ */
+.tb-btn .icon-sun, .tb-btn .icon-moon { pointer-events: none; }
+[data-mode="dark"] .tb-btn .icon-sun { display: none; }
+[data-mode="dark"] .tb-btn .icon-moon { display: inline; }
+[data-mode="light"] .tb-btn .icon-sun { display: inline; }
+[data-mode="light"] .tb-btn .icon-moon { display: none; }
+.pc-preview-wrap { position: relative; }
+.pc-preview {
+  background: var(--copy-bg); border: 1px solid var(--copy-border);
+  border-radius: 8px; padding: 20px;
+  font-family: var(--font-mono); font-size: 13px; line-height: 2;
+  color: var(--text-bright); white-space: pre-wrap; word-break: break-word;
+  min-height: 60px;
+}
+.pc-preview .ph { color: var(--accent); font-weight: 700; background: var(--accent-glow); padding: 2px 6px; border-radius: 4px; display: inline; }
+.pc-preview .filled { color: var(--text-bright); font-weight: 700; background: var(--gold-dim); padding: 2px 6px; border-radius: 4px; border-bottom: 2px solid var(--gold); display: inline; }
+
+.pc-copy {
+  display: block; width: 100%; margin-top: 12px;
+  background: var(--accent); color: var(--bg); border: none;
+  padding: 12px 20px; border-radius: 8px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; text-align: center;
+  transition: all .2s;
+}
+.pc-copy:hover { background: var(--accent-dim); transform: translateY(-1px); box-shadow: 0 4px 16px var(--accent-glow); }
+.pc-copy:active { transform: translateY(0); }
+.pc-copy.copied { background: var(--gold); color: var(--bg); }
+
+.pc-tip {
+  margin-top: 16px; padding: 12px 16px; border-radius: 8px;
+  background: var(--accent-glow); font-size: 13px; color: var(--text); line-height: 1.6;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.pc-tip-icon { flex-shrink: 0; font-size: 16px; }
+
+/* ═══ LIVE REGION ═══ */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+/* ═══ MOBILE TOGGLE ═══ */
+.mobile-toggle {
+  display: none; position: fixed; top: 12px; left: 12px; z-index: 200;
+  background: var(--accent); color: var(--bg); border: none;
+  width: 44px; height: 44px; border-radius: 10px; cursor: pointer;
+  font-size: 20px; box-shadow: 0 2px 12px rgba(0,0,0,.3);
+}
+
+/* ═══ TABLET (768–1024px) ═══ */
+@media (max-width: 1024px) {
+  .sidebar { width: 260px; }
+  .main { margin-left: 260px; padding: 32px 28px; }
+  .toolbar { margin: -32px -28px 24px; padding-left: 28px; padding-right: 28px; }
+  .module-header .mh-title { font-size: calc(26px * var(--zoom)); }
+  .pc-fields { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+}
+
+/* ═══ SIDEBAR CLOSE BUTTON ═══ */
+.sb-close { display:none;position:absolute;top:12px;right:12px;background:rgba(255,255,255,.08);border:none;color:var(--text-bright);width:36px;height:36px;border-radius:50%;font-size:20px;cursor:pointer;align-items:center;justify-content:center;transition:background .2s;z-index:10 }
+.sb-close:hover { background:rgba(255,255,255,.16) }
+.sidebar-backdrop { display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90 }
+.sidebar-backdrop.open { display:block }
+
+/* ═══ MOBILE (<768px) ═══ */
+@media (max-width: 768px) {
+  .mobile-toggle { display: flex; align-items: center; justify-content: center; }
+  .sb-close { display:flex }
+  .sidebar { transform: translateX(-100%); width: 300px; }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 32px rgba(0,0,0,.6); }
+  .main { margin-left: 0; padding: 20px 16px; padding-top: 68px; }
+  .toolbar { margin: -20px -16px 20px; margin-top: 0; padding: 8px 16px; top: 56px; }
+  .module-header { margin-bottom: 24px; padding-bottom: 16px; }
+  .module-header .mh-title { font-size: calc(22px * var(--zoom)); }
+  .module-header .mh-num { font-size: calc(11px * var(--zoom)); }
+  .pc-header { padding: 14px 16px; }
+  .pc-body { padding: 0 16px 20px; }
+  .pc-fields { grid-template-columns: 1fr; gap: 10px; }
+  .pc-title { font-size: calc(14px * var(--zoom)); }
+  .pc-preview { padding: calc(16px * var(--zoom)); font-size: calc(12px * var(--zoom)); }
+  .pc-copy { padding: calc(14px * var(--zoom)) 20px; font-size: calc(11px * var(--zoom)); }
+  .pc-tip { font-size: calc(12px * var(--zoom)); padding: 10px 12px; }
+  .tb-btn { width: 32px; height: 32px; font-size: 14px; }
+  .tb-label { font-size: 10px; min-width: 30px; }
+  .app-footer { font-size: 11px; }
+}
+
+/* ═══ SMALL MOBILE (<400px) ═══ */
+@media (max-width: 400px) {
+  .main { padding: 14px 12px; padding-top: 64px; }
+  .toolbar { margin: 0 -12px 16px; padding: 6px 12px; top: 52px; }
+  .module-header .mh-title { font-size: calc(20px * var(--zoom)); }
+  .pc-header { padding: 12px 12px; gap: 8px; }
+  .pc-left { gap: 10px; }
+  .pc-idx { font-size: calc(11px * var(--zoom)); min-width: 28px; }
+  .pc-title { font-size: calc(13px * var(--zoom)); }
+  .pc-body { padding: 0 12px 16px; }
+  .pc-preview { padding: calc(14px * var(--zoom)); font-size: calc(11px * var(--zoom)); }
+  .field-input { padding: calc(10px * var(--zoom)) 12px; font-size: calc(13px * var(--zoom)); }
+  .tb-btn { width: 28px; height: 28px; font-size: 13px; }
+  .tb-label { font-size: 9px; min-width: 26px; }
+  .tb-divider { margin: 0 4px; }
+}
+
+/* ═══ FOOTER ═══ */
+.app-footer {
+  margin-top: 60px; padding: 24px 0; border-top: 1px solid var(--border);
+  text-align: center; font-size: 12px; color: var(--text-dim); line-height: 2;
+}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ═══ NO-RESULTS ═══ */
+.no-results { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+.no-results-icon { font-size: 48px; margin-bottom: 16px; }
+.no-results-text { font-size: 15px; }
+
+/* ═══ LEGAL MODAL ═══ */
+.legal-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+.legal-overlay.open{display:flex}
+.legal-modal{background:var(--bg-card,#0d1a14);border:1px solid var(--border,rgba(0,255,136,.1));border-radius:16px;max-width:620px;width:100%;max-height:85vh;overflow-y:auto;padding:32px;position:relative;color:var(--text-main,#d4e8dc)}
+.legal-modal h1{font-size:22px;font-weight:900;color:var(--text-bright,#fff);margin-bottom:20px}
+.legal-modal h2{font-size:14px;font-weight:700;color:var(--accent,#00ff88);margin-top:22px;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.legal-modal p,.legal-modal li{font-size:13px;line-height:1.7;color:var(--text-main,#b0c8b8);margin-bottom:3px}
+.legal-modal ul{margin:4px 0 8px 18px}
+.legal-modal a{color:var(--accent,#00ff88)}
+.legal-modal .legal-ref{margin-top:24px;padding-top:16px;border-top:1px solid var(--border,rgba(255,255,255,.08));font-size:11px;color:var(--text-dim,#5a6e65)}
+.legal-close{position:sticky;top:0;float:right;background:rgba(255,255,255,.08);border:none;color:var(--text-bright,#fff);width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.legal-close:hover{background:rgba(255,255,255,.16)}
+</style>
+</head>
+<body data-theme="neon" data-mode="dark">
+
+<a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+
+<button class="mobile-toggle" aria-label="Navigation öffnen" aria-expanded="false" onclick="toggleSidebar()">☰</button>
+
+<div class="app">
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+  <nav class="sidebar" id="sidebar" aria-label="Modul-Navigation">
+    <button class="sb-close" onclick="toggleSidebar()" aria-label="Navigation schlie&szlig;en">&times;</button>
+    <div class="sb-brand">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <svg width="44" height="44" viewBox="0 0 52 52" fill="none"><defs><radialgradient id="lg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#00ff88" stop-opacity=".15"/><stop offset="100%" stop-color="#00ff88" stop-opacity="0"/></radialgradient><lineargradient id="ls" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00ff88"/><stop offset="100%" stop-color="#00b4d8"/></lineargradient></defs><g transform="translate(26,26)"><circle r="22" fill="url(#lg)"/><line x1="-15" y1="-13" x2="-7" y2="-5" stroke="#00ff88" stroke-width=".6" opacity=".35"/><line x1="15" y1="-13" x2="7" y2="-5" stroke="#00d4ff" stroke-width=".6" opacity=".35"/><circle cx="-15" cy="-13" r="2" fill="#00ff88" opacity=".5"/><circle cx="15" cy="-13" r="2" fill="#00d4ff" opacity=".5"/><circle cx="-15" cy="13" r="1.6" fill="#00d4ff" opacity=".3"/><circle cx="15" cy="13" r="1.6" fill="#00ff88" opacity=".3"/><rect x="-10" y="-8" width="20" height="16" rx="5" fill="rgba(0,229,160,.1)" stroke="url(#ls)" stroke-width="1.2"/><text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-family="'Sora',sans-serif" font-size="11" font-weight="900" fill="#fff" letter-spacing="1.8">AI</text></g></svg>
+        <span style="font-family:var(--font-body);font-size:18px;font-weight:900;color:var(--text-bright);letter-spacing:2px">GZ AI STACKS</span>
+      </div>
+      <div class="sb-badge">MASTER EDITION · 100 PROMPTS</div>
+      <h1 class="sb-title">Prompt-Generator</h1>
+      <div class="sb-count">Platzhalter ausfüllen · Prompt kopieren</div>
+    </div>
+    
+    <div class="sb-themes" role="group" aria-label="Design-Auswahl">
+      <div class="sb-themes-label" id="theme-label">Design wählen</div>
+      <div class="sb-themes-grid" role="radiogroup" aria-labelledby="theme-label">
+        <button class="theme-btn active" data-t="neon" role="radio" aria-checked="true" aria-label="Neon Terminal Design" onclick="setTheme('neon')"></button>
+        <button class="theme-btn" data-t="light" role="radio" aria-checked="false" aria-label="Clean White Design" onclick="setTheme('light')"></button>
+        <button class="theme-btn" data-t="paper" role="radio" aria-checked="false" aria-label="Warm Paper Design" onclick="setTheme('paper')"></button>
+        <button class="theme-btn" data-t="midnight" role="radio" aria-checked="false" aria-label="Midnight Blue Design" onclick="setTheme('midnight')"></button>
+      </div>
+    </div>
+
+    <div class="sb-search" role="search">
+      <label for="searchInput" class="sr-only">Prompt suchen</label>
+      <input type="search" id="searchInput" placeholder="Prompt suchen…" oninput="filterPrompts(this.value)" autocomplete="off">
+    </div>
+
+    <ul class="sb-nav" id="navList" role="tablist" aria-label="Module"></ul>
+  </nav>
+
+  <main class="main" id="main-content" data-zoom="1" aria-live="polite">
+    <div class="toolbar" role="toolbar" aria-label="Ansicht-Einstellungen">
+      <div class="tb-group" role="group" aria-label="Hell/Dunkel-Modus">
+        <button class="tb-btn" id="toggleMode" onclick="toggleMode()" aria-label="Zwischen Hell- und Dunkel-Modus wechseln">
+          <span class="icon-sun" aria-hidden="true">☀️</span>
+          <span class="icon-moon" aria-hidden="true">🌙</span>
+        </button>
+      </div>
+      <div class="tb-divider" aria-hidden="true"></div>
+      <div class="tb-group" role="group" aria-label="Zoom-Steuerung">
+        <button class="tb-btn" onclick="changeZoom(-0.1)" aria-label="Verkleinern">−</button>
+        <span class="tb-label" id="zoomLabel" aria-live="polite">100%</span>
+        <button class="tb-btn" onclick="changeZoom(0.1)" aria-label="Vergrößern">+</button>
+      </div>
+    </div>
+    <div id="mainContent"></div>
+  </main>
+</div>
+
+<div class="sr-only" aria-live="assertive" id="liveAnnounce"></div>
+
+<script>
+// ═══ DATA ═══
+const MODULES = [{"id": "M01", "name": "Einstieg & Grundlagen", "icon": "🚀", "master": false, "prompts": [{"id": 0, "title": "Erste Konversation starten", "cat": "GRUNDLAGE", "prompt": "Du bist mein KI-Assistent. Ich arbeite als [ROLLE] in der [BRANCHE]. Meine täglichen Aufgaben umfassen [AUFGABEN]. Erstelle mir ein Profil meiner typischen Arbeitswoche und schlage 5 konkrete Bereiche vor, in denen du mich am meisten unterstützen kannst.", "tip": "Ersetze die Platzhalter [ROLLE], [BRANCHE] und [AUFGABEN] mit deinen echten Daten.", "placeholders": ["ROLLE", "BRANCHE", "AUFGABEN"]}, {"id": 1, "title": "Kontext-Briefing erstellen", "cat": "GRUNDLAGE", "prompt": "Erstelle ein strukturiertes Kontext-Briefing für unsere Zusammenarbeit. Ich brauche: 1) Mein Rollenprofil, 2) Meine Top-3 Herausforderungen, 3) Meine Kommunikationspräferenzen, 4) Wiederkehrende Aufgabentypen. Stelle mir die nötigen Fragen, um dieses Briefing aufzubauen.", "tip": "Speichere das Ergebnis als Vorlage für neue Chats.", "placeholders": []}, {"id": 2, "title": "Aufgabe klar formulieren", "cat": "GRUNDLAGE", "prompt": "Hilf mir, folgende Aufgabe klar zu formulieren: [AUFGABE]. Strukturiere meine Anfrage nach dem Schema: 1) Kontext, 2) Ziel, 3) Zielgruppe, 4) gewünschtes Format, 5) Qualitätskriterien. Zeige mir die optimierte Version.", "tip": "Das 5-Punkte-Schema funktioniert für fast jede Aufgabe.", "placeholders": ["AUFGABE"]}, {"id": 3, "title": "Ausgabeformat definieren", "cat": "GRUNDLAGE", "prompt": "Ich brauche [INHALT] im folgenden Format: Sprache: Deutsch (formell/informell), Länge: [WORTANZAHL], Struktur: [z.B. Bullet Points / Fließtext / Tabelle], Tonalität: [z.B. professionell / kreativ / überzeugend]. Erstelle den Inhalt entsprechend.", "tip": "Je präziser das Format, desto besser das Ergebnis.", "placeholders": ["INHALT", "WORTANZAHL"]}, {"id": 4, "title": "Ergebnis iterativ verbessern", "cat": "GRUNDLAGE", "prompt": "Hier ist dein letztes Ergebnis: [ERGEBNIS EINFÜGEN]. Bitte überarbeite es mit folgenden Änderungen: 1) [ÄNDERUNG 1], 2) [ÄNDERUNG 2], 3) [ÄNDERUNG 3]. Behalte den Rest bei und erkläre kurz, was du geändert hast.", "tip": "Iteration ist der Schlüssel — selten ist der erste Entwurf perfekt.", "placeholders": ["ERGEBNIS EINFÜGEN", "ÄNDERUNG 1", "ÄNDERUNG 2", "ÄNDERUNG 3"]}]}, {"id": "M02", "name": "Business-Kommunikation", "icon": "💼", "master": false, "prompts": [{"id": 5, "title": "Professionelle E-Mail verfassen", "cat": "KOMMUNIKATION", "prompt": "Verfasse eine professionelle E-Mail an [EMPFÄNGER] zum Thema [BETREFF]. Kontext: [HINTERGRUND]. Ziel: [WAS SOLL ERREICHT WERDEN]. Tonalität: professionell aber freundlich. Füge eine klare Handlungsaufforderung ein. Max. 150 Wörter.", "tip": "Kurze E-Mails werden 2x häufiger komplett gelesen.", "placeholders": ["EMPFÄNGER", "BETREFF", "HINTERGRUND", "WAS SOLL ERREICHT WERDEN"]}, {"id": 6, "title": "Meeting-Agenda erstellen", "cat": "KOMMUNIKATION", "prompt": "Erstelle eine strukturierte Meeting-Agenda für: Thema: [THEMA], Teilnehmer: [LISTE], Dauer: [MINUTEN] Minuten. Füge für jeden Punkt hinzu: Zeitfenster, verantwortliche Person, erwartetes Ergebnis. Schließe mit konkreten Next Steps.", "tip": "Teile die Agenda 24h vor dem Meeting — das erhöht die Produktivität um 30%.", "placeholders": ["THEMA", "LISTE", "MINUTEN"]}, {"id": 7, "title": "Feedback diplomatisch formulieren", "cat": "KOMMUNIKATION", "prompt": "Formuliere konstruktives Feedback zu: [SITUATION]. Verwende die SBI-Methode (Situation-Behavior-Impact). Beginne mit einer positiven Beobachtung, nenne das konkrete Verhalten, beschreibe die Auswirkung und schlage eine Alternative vor. Tonalität: wertschätzend und klar.", "tip": "SBI-Feedback ist nachweislich effektiver als \"Sandwich-Feedback\".", "placeholders": ["SITUATION"]}, {"id": 8, "title": "Statusbericht schreiben", "cat": "KOMMUNIKATION", "prompt": "Erstelle einen Statusbericht für [PROJEKT/ZEITRAUM]. Struktur: 1) Executive Summary (3 Sätze), 2) Erreichte Meilensteine, 3) Aktuelle Herausforderungen, 4) Nächste Schritte mit Deadlines, 5) Benötigte Entscheidungen. Hier sind die Rohdaten: [STICHPUNKTE].", "tip": "Die Executive Summary ist der wichtigste Teil — Führungskräfte lesen oft nur diesen.", "placeholders": ["PROJEKT/ZEITRAUM", "STICHPUNKTE"]}, {"id": 9, "title": "Schwierige Nachricht überbringen", "cat": "KOMMUNIKATION", "prompt": "Hilf mir, folgende schwierige Nachricht professionell zu kommunizieren: [NACHRICHT]. Empfänger: [WER]. Erstelle drei Varianten: 1) Direkt und sachlich, 2) Empathisch mit Lösungsangebot, 3) Schriftlich per E-Mail. Markiere die Schlüsselsätze.", "tip": "Ehrlichkeit + Lösungsorientierung = Vertrauen.", "placeholders": ["NACHRICHT", "WER"]}]}, {"id": "M03", "name": "Dokumente & Reporting", "icon": "📄", "master": false, "prompts": [{"id": 10, "title": "Bericht aus Stichpunkten generieren", "cat": "DOKUMENTE", "prompt": "Erstelle aus folgenden Stichpunkten einen professionellen Bericht: [STICHPUNKTE]. Format: Einleitung (3 Sätze), Hauptteil mit Zwischenüberschriften, Fazit mit Handlungsempfehlungen. Zielgruppe: [Geschäftsführung / Team / Kunden]. Länge: ca. [SEITENANZAHL] Seiten.", "tip": "Nenne immer die Zielgruppe — sie bestimmt Detailtiefe und Fachsprache.", "placeholders": ["STICHPUNKTE", "SEITENANZAHL"]}, {"id": 11, "title": "Executive Summary erstellen", "cat": "DOKUMENTE", "prompt": "Fasse folgenden Text in einer Executive Summary zusammen: [TEXT EINFÜGEN]. Max. 200 Wörter. Struktur: 1) Kernaussage, 2) Wichtigste Ergebnisse (3 Bullet Points), 3) Empfohlene Maßnahme. Schreibstil: klar, entscheidungsorientiert.", "tip": "Eine gute Executive Summary kann alleine gelesen werden und enthält alles Wesentliche.", "placeholders": ["TEXT EINFÜGEN"]}, {"id": 12, "title": "Protokoll aus Notizen erstellen", "cat": "DOKUMENTE", "prompt": "Erstelle ein formelles Meeting-Protokoll aus diesen Notizen: [NOTIZEN]. Teilnehmer: [LISTE]. Datum: [DATUM]. Gliedere nach: Tagesordnungspunkt, Diskussion, Beschluss, Verantwortlich, Frist. Füge eine Aufgabenliste am Ende hinzu.", "tip": "Protokolle innerhalb von 24h versenden — dann ist alles noch frisch.", "placeholders": ["NOTIZEN", "LISTE", "DATUM"]}, {"id": 13, "title": "Vorlage für wiederkehrende Berichte", "cat": "DOKUMENTE", "prompt": "Erstelle eine wiederverwendbare Berichtsvorlage für [BERICHTSTYP]. Die Vorlage soll enthalten: Platzhalter für variable Daten, feste Textbausteine, Formatierungshinweise und eine Checkliste für die Qualitätskontrolle. Kennzeichne alle variablen Felder mit [PLATZHALTER].", "tip": "Templates sparen pro Bericht 30-60 Minuten.", "placeholders": ["BERICHTSTYP", "PLATZHALTER"]}, {"id": 14, "title": "Daten in Textform beschreiben", "cat": "DOKUMENTE", "prompt": "Beschreibe folgende Daten/Zahlen in verständlichem Fließtext: [DATEN]. Zielgruppe: [FACHFREMD / MANAGEMENT / EXPERTEN]. Hebe Trends, Ausreißer und die wichtigsten Erkenntnisse hervor. Verwende Vergleiche und Prozentangaben wo sinnvoll.", "tip": "Zahlen + Kontext = Verständnis. Nie Zahlen ohne Einordnung präsentieren.", "placeholders": ["DATEN", "FACHFREMD / MANAGEMENT / EXPERTEN"]}]}, {"id": "M04", "name": "Recherche & Analyse", "icon": "🔍", "master": false, "prompts": [{"id": 15, "title": "Marktrecherche strukturieren", "cat": "ANALYSE", "prompt": "Erstelle einen strukturierten Recherche-Plan zum Thema [THEMA]. Gliedere in: 1) Zentrale Fragestellungen, 2) Relevante Datenquellen, 3) Suchbegriffe (deutsch + englisch), 4) Bewertungskriterien für Quellen, 5) Erwartete Ergebnisstruktur.", "tip": "Ein guter Recherche-Plan spart 50% der eigentlichen Recherchezeit.", "placeholders": ["THEMA"]}, {"id": 16, "title": "SWOT-Analyse durchführen", "cat": "ANALYSE", "prompt": "Führe eine SWOT-Analyse durch für: [UNTERNEHMEN/PRODUKT/IDEE]. Kontext: [BRANCHE], [MARKTLAGE]. Erstelle für jedes Feld (Stärken, Schwächen, Chancen, Risiken) mindestens 4 konkrete Punkte. Leite daraus 3 strategische Empfehlungen ab.", "tip": "SWOT funktioniert auch hervorragend für Selbstanalyse und Karriereplanung.", "placeholders": ["UNTERNEHMEN/PRODUKT/IDEE", "BRANCHE", "MARKTLAGE"]}, {"id": 17, "title": "Pro-Contra-Analyse erstellen", "cat": "ANALYSE", "prompt": "Erstelle eine gewichtete Pro-Contra-Analyse für die Entscheidung: [ENTSCHEIDUNG]. Bewerte jeden Punkt auf einer Skala von 1-5 (Wichtigkeit). Berechne einen Gesamtscore und gib eine begründete Empfehlung.", "tip": "Gewichtung macht den Unterschied — nicht alle Argumente sind gleich wichtig.", "placeholders": ["ENTSCHEIDUNG"]}, {"id": 18, "title": "Wettbewerbsanalyse", "cat": "ANALYSE", "prompt": "Analysiere die Wettbewerbslandschaft für [PRODUKT/SERVICE] im Markt [MARKT]. Identifiziere: 1) Die 5 wichtigsten Wettbewerber, 2) Deren USPs, 3) Preispositionierung, 4) Stärken und Schwächen, 5) Unsere Differenzierungsmöglichkeiten.", "tip": "Aktualisiere Wettbewerbsanalysen vierteljährlich.", "placeholders": ["PRODUKT/SERVICE", "MARKT"]}, {"id": 19, "title": "Trend-Briefing erstellen", "cat": "ANALYSE", "prompt": "Erstelle ein Trend-Briefing für [BRANCHE/THEMA]. Struktur: 1) Die 5 wichtigsten Trends mit Kurzbeschreibung, 2) Zeitlicher Horizont (kurzfristig/mittelfristig/langfristig), 3) Relevanz für unser Unternehmen (1-5), 4) Konkrete Handlungsempfehlungen pro Trend.", "tip": "Trends immer mit konkreten Handlungsoptionen verknüpfen.", "placeholders": ["BRANCHE/THEMA"]}]}, {"id": "M05", "name": "Kommunikationsstrategie", "icon": "📢", "master": false, "prompts": [{"id": 20, "title": "Kommunikationsplan entwickeln", "cat": "STRATEGIE", "prompt": "Entwickle einen Kommunikationsplan für [PROJEKT/LAUNCH/CHANGE]. Zeitraum: [WOCHEN ANZAHL] Wochen. Zielgruppen: [LISTE]. Erstelle eine Timeline mit: Botschaft, Kanal, Verantwortlich, Frequenz.", "tip": "Interne Kommunikation immer VOR externer Kommunikation planen.", "placeholders": ["PROJEKT/LAUNCH/CHANGE", "WOCHEN ANZAHL", "LISTE"]}, {"id": 21, "title": "Zielgruppengerechte Ansprache", "cat": "STRATEGIE", "prompt": "Formuliere dieselbe Botschaft [BOTSCHAFT] für 3 verschiedene Zielgruppen: 1) C-Level / Geschäftsführung, 2) Fachabteilung / Teamleiter, 3) Endanwender / Mitarbeiter. Passe Sprache, Detailtiefe und Nutzenargumente jeweils an.", "tip": "Eine Botschaft, drei Sprachen — das ist professionelle Kommunikation.", "placeholders": ["BOTSCHAFT"]}, {"id": 22, "title": "FAQ-Katalog erstellen", "cat": "STRATEGIE", "prompt": "Erstelle einen umfassenden FAQ-Katalog zum Thema [THEMA]. Denke aus Sicht von: Kunden, Mitarbeitern, Partnern, Medien. Pro Perspektive: 5 wahrscheinlichste Fragen mit prägnanten Antworten (max. 3 Sätze).", "tip": "FAQs regelmäßig mit echten Kundenfragen aktualisieren.", "placeholders": ["THEMA"]}, {"id": 23, "title": "Krisenkommunikation vorbereiten", "cat": "STRATEGIE", "prompt": "Erstelle ein Krisenkommunikations-Template für das Szenario: [SZENARIO]. Inkludiere: 1) Erste Stellungnahme (innerhalb 1h), 2) Detailliertes Statement (innerhalb 4h), 3) Q&A für Mitarbeiter, 4) Talking Points für Führungskräfte.", "tip": "Krisenkommunikation vorbereiten, BEVOR die Krise eintritt.", "placeholders": ["SZENARIO"]}, {"id": 24, "title": "Stakeholder-Mapping", "cat": "STRATEGIE", "prompt": "Erstelle ein Stakeholder-Mapping für [PROJEKT]. Kategorisiere nach Einfluss (hoch/mittel/niedrig) und Betroffenheit (hoch/mittel/niedrig). Empfehle für jede Gruppe: Kommunikationsfrequenz, bevorzugter Kanal und Kernbotschaft.", "tip": "Hoher Einfluss + hohe Betroffenheit = intensivste Kommunikation.", "placeholders": ["PROJEKT"]}]}, {"id": "M06", "name": "Projektmanagement", "icon": "📋", "master": false, "prompts": [{"id": 25, "title": "Projektplan erstellen", "cat": "PROJEKT", "prompt": "Erstelle einen Projektplan für: [PROJEKT]. Dauer: [ZEITRAUM]. Team: [ANZAHL] Personen. Gliedere in Phasen mit: Meilensteinen, Aufgabenpaketen, Verantwortlichkeiten, Abhängigkeiten und geschätztem Aufwand.", "tip": "Der kritische Pfad bestimmt die Mindestdauer.", "placeholders": ["PROJEKT", "ZEITRAUM", "ANZAHL"]}, {"id": 26, "title": "Risikomanagement-Matrix", "cat": "PROJEKT", "prompt": "Erstelle eine Risikomanagement-Matrix für [PROJEKT]. Identifiziere 10 potenzielle Risiken. Bewerte: Eintrittswahrscheinlichkeit (1-5), Auswirkung (1-5), Risikoprioritätszahl. Definiere für die Top-5: Präventivmaßnahme und Notfallplan.", "tip": "Risiken früh identifizieren = Kosten sparen.", "placeholders": ["PROJEKT"]}, {"id": 27, "title": "Sprint-Planung", "cat": "PROJEKT", "prompt": "Plane den nächsten Sprint (2 Wochen) für unser Team. Backlog: [AUFGABENLISTE]. Teamkapazität: [STUNDEN]. Priorisiere nach Business Value und schätze Story Points. Erstelle ein Sprint-Ziel und definiere die Definition of Done.", "tip": "Sprint-Ziel = ein Satz, der den Wert des Sprints beschreibt.", "placeholders": ["AUFGABENLISTE", "STUNDEN"]}, {"id": 28, "title": "Projektstatusbericht (Ampel)", "cat": "PROJEKT", "prompt": "Erstelle einen Projektstatusbericht im Ampel-Format. Projekt: [NAME]. Bewerte: Zeitplan (grün/gelb/rot), Budget, Qualität, Scope, Teamstimmung. Pro gelber/roter Ampel: Ursache + Gegenmaßnahme.", "tip": "Ampel-Berichte eignen sich perfekt für Management-Meetings.", "placeholders": ["NAME"]}, {"id": 29, "title": "Retrospektive moderieren", "cat": "PROJEKT", "prompt": "Erstelle einen Retrospektive-Leitfaden für unser Team ([ANZAHL] Personen, [MINUTEN] Min). Letzte Phase: [ZUSAMMENFASSUNG]. Verwende: 1) Was lief gut? 2) Was verbessern? 3) Was probieren? Erstelle 3 Eisbrecher-Fragen.", "tip": "Psychologische Sicherheit ist der #1 Erfolgsfaktor für Retros.", "placeholders": ["ANZAHL", "MINUTEN", "ZUSAMMENFASSUNG"]}]}, {"id": "M07", "name": "Content & Kreativität", "icon": "✨", "master": false, "prompts": [{"id": 30, "title": "LinkedIn-Post schreiben", "cat": "CONTENT", "prompt": "Schreibe einen LinkedIn-Post zum Thema [THEMA]. Hook in der ersten Zeile (max. 10 Wörter), dann 3 Key Insights mit Absätzen, Call-to-Action am Ende. Tonalität: [persönlich / fachlich / inspirierend]. Max. 200 Wörter. Schlage 3 Hashtags vor.", "tip": "Die erste Zeile entscheidet — sie muss zum Weiterlesen verleiten.", "placeholders": ["THEMA"]}, {"id": 31, "title": "Blog-Artikel Outline", "cat": "CONTENT", "prompt": "Erstelle ein detailliertes Outline für einen Blog-Artikel: Thema: [THEMA], Zielgruppe: [WER], SEO-Keywords: [KEYWORDS]. Gliederung: Titel (3 Optionen), H2/H3-Struktur, Kernaussage pro Abschnitt, CTA.", "tip": "Ein gutes Outline = halbe Arbeit.", "placeholders": ["THEMA", "WER", "KEYWORDS"]}, {"id": 32, "title": "Newsletter-Text erstellen", "cat": "CONTENT", "prompt": "Erstelle einen Newsletter zum Thema [THEMA]. Zielgruppe: [EMPFÄNGER]. Struktur: Betreffzeile (3 A/B-Varianten), Preheader, Einleitung (persönlich), Hauptinhalt (3 Abschnitte), CTA-Button-Text. Max. 400 Wörter.", "tip": "A/B-teste immer die Betreffzeile.", "placeholders": ["THEMA", "EMPFÄNGER"]}, {"id": 33, "title": "Kreatives Brainstorming", "cat": "CONTENT", "prompt": "Starte ein kreatives Brainstorming für [THEMA/PROBLEM]. Verwende 3 Kreativtechniken: 1) Umkehr-Methode, 2) Analogie (Wie löst eine andere Branche das?), 3) Zufallsinput (Verbinde mit [ZUFALLSWORT]). Pro Technik: 5 Ideen.", "tip": "Quantität vor Qualität — erst sammeln, dann bewerten.", "placeholders": ["THEMA/PROBLEM", "ZUFALLSWORT"]}, {"id": 34, "title": "Social-Media-Contentplan", "cat": "CONTENT", "prompt": "Erstelle einen Contentplan für [PLATTFORM] für die nächsten [WOCHEN] Wochen. Themenbereich: [THEMA]. Pro Woche: [ANZAHL] Posts. Für jeden Post: Thema, Format (Text/Bild/Video/Carousel), Kernbotschaft, beste Uhrzeit.", "tip": "Contentplanung spart 5+ Stunden pro Woche.", "placeholders": ["PLATTFORM", "WOCHEN", "THEMA", "ANZAHL"]}]}, {"id": "M08", "name": "Power-User Setup", "icon": "⚡", "master": false, "prompts": [{"id": 35, "title": "Custom System-Prompt erstellen", "cat": "POWER-USER", "prompt": "Erstelle einen optimierten System-Prompt für meine tägliche Arbeit. Mein Profil: Rolle: [ROLLE], Branche: [BRANCHE], Hauptaufgaben: [AUFGABEN], Bevorzugter Stil: [STIL]. Der System-Prompt soll Kontext, Verhaltensregeln und Ausgabeformat definieren.", "tip": "Ein guter System-Prompt erspart dir in jedem Chat 2-3 Einleitungssätze.", "placeholders": ["ROLLE", "BRANCHE", "AUFGABEN", "STIL"]}, {"id": 36, "title": "Prompt-Kette für komplexe Aufgaben", "cat": "POWER-USER", "prompt": "Zerlege folgende komplexe Aufgabe in eine Prompt-Kette: [AUFGABE]. Erstelle eine Sequenz von 3-5 aufeinanderfolgenden Prompts, wobei jeder auf dem Ergebnis des vorherigen aufbaut. Nummeriere die Schritte.", "tip": "Chain-of-Thought Prompting erhöht die Qualität bei komplexen Aufgaben um bis zu 40%.", "placeholders": ["AUFGABE"]}, {"id": 37, "title": "Wiederverwendbare Vorlagen-Bibliothek", "cat": "POWER-USER", "prompt": "Erstelle eine Vorlagen-Bibliothek mit 5 wiederverwendbaren Prompts für meinen Arbeitsalltag als [ROLLE]. Jede Vorlage: Name, Zweck, Prompt mit [PLATZHALTERN], erwartetes Ergebnis, Best-Practice-Tipp.", "tip": "Die besten Prompts sind die, die du immer wieder verwenden kannst.", "placeholders": ["ROLLE", "PLATZHALTERN"]}, {"id": 38, "title": "Qualitätskontroll-Prompt", "cat": "POWER-USER", "prompt": "Prüfe folgenden Text/Output auf: 1) Faktische Korrektheit, 2) Logische Konsistenz, 3) Vollständigkeit, 4) Sprachliche Qualität, 5) Zielgruppenpassung. Text: [TEXT]. Erstelle eine Bewertungsmatrix (1-5) mit Verbesserungsvorschlägen.", "tip": "Immer eine zweite KI-Runde zur Qualitätskontrolle nutzen.", "placeholders": ["TEXT"]}, {"id": 39, "title": "Rollenbasiertes Prompting", "cat": "POWER-USER", "prompt": "Nimm die Rolle eines [EXPERTE: z.B. Unternehmensberater / Data Scientist / UX-Designer] ein. Analysiere [THEMA/PROBLEM] aus dieser Expertenperspektive. Verwende Fachterminologie, branchentypische Frameworks und gib konkrete Empfehlungen.", "tip": "Rollenbasiertes Prompting aktiviert anderes \"Wissen\" im Sprachmodell.", "placeholders": ["THEMA/PROBLEM"]}]}, {"id": "M09", "name": "Datenschutz & Ethik", "icon": "🛡️", "master": false, "prompts": [{"id": 40, "title": "Datenschutz-Checkliste für KI", "cat": "COMPLIANCE", "prompt": "Erstelle eine DSGVO-Checkliste für den Einsatz von KI-Tools in unserem Unternehmen. Kategorien: 1) Welche Daten dürfen eingegeben werden? 2) Welche nicht? 3) Anonymisierungsmethoden, 4) Dokumentationspflichten, 5) Schulungsbedarf.", "tip": "Personenbezogene Daten NIEMALS in externe KI-Tools eingeben ohne Rechtsgrundlage.", "placeholders": []}, {"id": 41, "title": "KI-Nutzungsrichtlinie erstellen", "cat": "COMPLIANCE", "prompt": "Erstelle eine interne Richtlinie zur KI-Nutzung für unser Unternehmen ([BRANCHE], [MITARBEITERZAHL]). Gliederung: 1) Geltungsbereich, 2) Erlaubte Anwendungsfälle, 3) Verbotene Anwendungen, 4) Datenklassifizierung (grün/gelb/rot), 5) Freigabeprozess, 6) Haftung.", "tip": "Eine KI-Richtlinie schützt das Unternehmen und gibt Mitarbeitern Sicherheit.", "placeholders": ["BRANCHE", "MITARBEITERZAHL"]}, {"id": 42, "title": "Bias-Check für KI-Outputs", "cat": "ETHIK", "prompt": "Analysiere folgenden KI-generierten Text auf mögliche Verzerrungen (Bias): [TEXT]. Prüfe auf: 1) Gender-Bias, 2) Kulturelle Voreingenommenheit, 3) Alters-Diskriminierung, 4) Sozioökonomische Annahmen, 5) Bestätigungsfehler. Schlage neutrale Alternativen vor.", "tip": "KI reproduziert Bias aus Trainingsdaten — kritisches Prüfen ist Pflicht.", "placeholders": ["TEXT"]}, {"id": 43, "title": "Transparenz-Statement für KI-Nutzung", "cat": "ETHIK", "prompt": "Erstelle ein Transparenz-Statement für unsere [Website / Kundenkommunikation / interne Prozesse], das offenlegt, wo und wie wir KI einsetzen. Berücksichtige: Art der KI-Nutzung, menschliche Überprüfung, Datenschutz, Kontaktmöglichkeit.", "tip": "Transparenz bei KI-Nutzung wird ab 2026 durch den EU AI Act teilweise Pflicht.", "placeholders": []}, {"id": 44, "title": "Ethik-Bewertung für KI-Anwendungsfall", "cat": "ETHIK", "prompt": "Führe eine ethische Bewertung für folgenden KI-Anwendungsfall durch: [BESCHREIBUNG]. Prüfe anhand des EU-Ethik-Frameworks: 1) Menschliche Kontrolle, 2) Technische Robustheit, 3) Datenschutz, 4) Transparenz, 5) Nicht-Diskriminierung, 6) Gesellschaftliches Wohlergehen. Bewerte 1-5.", "tip": "Die 7 EU-Ethikprinzipien für KI als Dauerstandard etablieren.", "placeholders": ["BESCHREIBUNG"]}]}, {"id": "M10", "name": "Daten & Excel-Magie", "icon": "📊", "master": true, "prompts": [{"id": 45, "title": "Excel-Formel generieren", "cat": "DATEN", "prompt": "Erstelle eine Excel-Formel für folgendes Problem: [BESCHREIBUNG]. Tabelle: [SPALTEN BESCHREIBEN]. Gewünschtes Ergebnis: [WAS SOLL BERECHNET WERDEN]. Erstelle die Formel, erkläre jeden Teil und zeige ein Beispiel.", "tip": "Beschreibe die Tabellenstruktur möglichst genau.", "placeholders": ["BESCHREIBUNG", "SPALTEN BESCHREIBEN", "WAS SOLL BERECHNET WERDEN"]}, {"id": 46, "title": "Datensatz bereinigen", "cat": "DATEN", "prompt": "Hilf mir, folgenden Datensatz zu bereinigen: [DATEN BESCHREIBEN]. Typische Probleme: Duplikate, fehlende Werte, Inkonsistenzen, Formatfehler. Erstelle einen Schritt-für-Schritt Bereinigungsplan mit konkreten Formeln.", "tip": "80% der Analysezeit geht für Datenbereinigung drauf — das ist normal.", "placeholders": ["DATEN BESCHREIBEN"]}, {"id": 47, "title": "Dashboard-Konzept entwerfen", "cat": "DATEN", "prompt": "Entwirf ein Dashboard-Konzept für [ZWECK]. Zielgruppe: [WER]. Erstelle: 1) Die 5-7 wichtigsten KPIs, 2) Visualisierungstyp pro KPI, 3) Filter und Drill-Down-Optionen, 4) Update-Frequenz, 5) Datenquellen.", "tip": "Max. 7 KPIs pro Dashboard.", "placeholders": ["ZWECK", "WER"]}, {"id": 48, "title": "Pivot-Tabelle planen", "cat": "DATEN", "prompt": "Plane eine Pivot-Tabelle für: Daten: [BESCHREIBUNG], Frage: [WAS SOLL BEANTWORTET WERDEN]. Definiere: Zeilen, Spalten, Werte (mit Aggregation), Filter. Erstelle die Schritt-für-Schritt Anleitung.", "tip": "Pivot-Tabellen sind das mächtigste Analyse-Tool in Excel.", "placeholders": ["BESCHREIBUNG", "WAS SOLL BEANTWORTET WERDEN"]}, {"id": 49, "title": "Automatische Reporting-Vorlage", "cat": "DATEN", "prompt": "Erstelle eine Vorlage für automatisiertes Reporting: Datenquelle: [ART], Frequenz: [WÖCHENTLICH/MONATLICH], Empfänger: [WER]. Definiere: Datenstruktur, Berechnungen, Diagramme, bedingte Formatierung und VBA-Ansatz.", "tip": "Einmal automatisieren = hundertfach profitieren.", "placeholders": ["ART", "WÖCHENTLICH/MONATLICH", "WER"]}, {"id": 50, "title": "Datenvisualisierung auswählen", "cat": "DATEN", "prompt": "Ich habe folgende Daten: [BESCHREIBUNG]. Empfehle die optimale Visualisierung. Erkläre: 1) Warum dieser Diagrammtyp? 2) Achsen/Farben? 3) Häufige Fehler? 4) Umsetzungsanleitung für Excel.", "tip": "Balken für Vergleiche, Linien für Zeitverläufe, Kuchen nur bei <5 Kategorien.", "placeholders": ["BESCHREIBUNG"]}, {"id": 51, "title": "SQL-Abfrage aus natürlicher Sprache", "cat": "DATEN", "prompt": "Übersetze folgende Frage in eine SQL-Abfrage: [FRAGE]. Datenbank-Schema: [TABELLEN UND SPALTEN]. Erstelle die Abfrage, erkläre jeden Teil und zeige das erwartete Ergebnis.", "tip": "Immer das Schema mitgeben.", "placeholders": ["FRAGE", "TABELLEN UND SPALTEN"]}, {"id": 52, "title": "CSV-Daten analysieren", "cat": "DATEN", "prompt": "Analysiere folgenden CSV-Datensatz: [DATEN EINFÜGEN ODER BESCHREIBEN]. Erstelle: 1) Deskriptive Statistik, 2) Die 3 auffälligsten Muster, 3) Ausreißer-Analyse, 4) Handlungsempfehlungen.", "tip": "Die ersten 20 Zeilen reichen für die Strukturerkennung.", "placeholders": ["DATEN EINFÜGEN ODER BESCHREIBEN"]}, {"id": 53, "title": "Bedingte Formatierung planen", "cat": "DATEN", "prompt": "Plane bedingte Formatierungen für meine Excel-Tabelle: [BESCHREIBEN]. Ich brauche: Ampellogik (grün/gelb/rot) für [KENNZAHLEN], Datenbalken für [SPALTEN], Icon-Sets für [WERTE]. Erstelle Regeln mit Schwellenwerten.", "tip": "Bedingte Formatierung = sofortiges visuelles Feedback.", "placeholders": ["BESCHREIBEN", "KENNZAHLEN", "SPALTEN", "WERTE"]}, {"id": 54, "title": "Datenvalidierung erstellen", "cat": "DATEN", "prompt": "Erstelle einen Datenvalidierungsplan für [DATENSATZ]. Prüfe auf: 1) Fehlende Pflichtfelder, 2) Formatfehler, 3) Logische Widersprüche, 4) Duplikate, 5) Wertebereich-Verletzungen. Erstelle Excel-Formeln pro Check.", "tip": "Saubere Daten = vertrauenswürdige Analysen.", "placeholders": ["DATENSATZ"]}, {"id": 55, "title": "KPI-Tracking-Sheet aufbauen", "cat": "DATEN", "prompt": "Erstelle die Struktur für ein KPI-Tracking-Sheet. Abteilung: [ABTEILUNG], KPIs: [LISTE]. Pro KPI: Berechnungsformel, Zielwert, Toleranzbereich, Datenquelle, Update-Frequenz. Monats-/Quartalsansicht mit Trend.", "tip": "Max. 5-7 KPIs pro Abteilung.", "placeholders": ["ABTEILUNG", "LISTE"]}]}, {"id": "M11", "name": "Präsentations-Profi", "icon": "🎯", "master": true, "prompts": [{"id": 56, "title": "Präsentationsstruktur erstellen", "cat": "PRÄSENTATION", "prompt": "Erstelle eine Präsentationsstruktur für: Thema: [THEMA], Publikum: [WER], Dauer: [MINUTEN]. Folienanzahl, Kernbotschaft pro Folie, Speaker Notes, Übergänge. Verwende die Pyramiden-Struktur.", "tip": "Pyramidenprinzip: Erst die Empfehlung, dann die Begründung.", "placeholders": ["THEMA", "WER", "MINUTEN"]}, {"id": 57, "title": "Storytelling für Business", "cat": "PRÄSENTATION", "prompt": "Entwickle eine Storytelling-Struktur für meine Präsentation: [THEMA]. Heldenreise-Modell: 1) Status Quo (Problem), 2) Wendepunkt (Erkenntnis), 3) Transformation (Lösung), 4) Neues Normal (Ergebnis). Erstelle Einstieg und Schluss.", "tip": "Menschen erinnern sich an Geschichten, nicht an Bullet Points.", "placeholders": ["THEMA"]}, {"id": 58, "title": "Pitch-Deck erstellen", "cat": "PRÄSENTATION", "prompt": "Erstelle Textinhalte für ein Pitch-Deck: Produkt/Idee: [BESCHREIBUNG]. 10-Folien-Struktur: Problem, Lösung, Markt, Geschäftsmodell, Traction, Team, Wettbewerb, Finanzplan, Ask, Vision.", "tip": "Die Problem-Folie ist die wichtigste.", "placeholders": ["BESCHREIBUNG"]}, {"id": 59, "title": "Folientexte optimieren", "cat": "PRÄSENTATION", "prompt": "Optimiere folgende Folientexte nach \"Less is More\": [TEXTE]. Regeln: Max. 6 Wörter pro Headline, max. 3 Bullet Points pro Folie, max. 8 Wörter pro Bullet. Erstelle vorher/nachher Versionen.", "tip": "Folien sind visuelle Anker — nicht Dokumentation.", "placeholders": ["TEXTE"]}, {"id": 60, "title": "Q&A-Vorbereitung", "cat": "PRÄSENTATION", "prompt": "Bereite mich auf die Q&A-Runde nach meiner Präsentation vor: [THEMA]. Erstelle: 1) 10 wahrscheinlichste Fragen, 2) 3 schwierigste Fragen, 3) Kurze Antworten (max. 3 Sätze), 4) Brücken-Sätze bei unbeantwortbaren Fragen.", "tip": "\"Das ist eine gute Frage...\" kauft Denkzeit.", "placeholders": ["THEMA"]}, {"id": 61, "title": "Workshop-Design", "cat": "PRÄSENTATION", "prompt": "Designe einen [STUNDEN]-stündigen Workshop zum Thema [THEMA] für [ANZAHL] Teilnehmer. Agenda mit Zeitblöcken, Methoden-Mix, Materialien, Energizer, Ergebnissicherung.", "tip": "Max. 20 Min Input am Stück, dann Interaktion.", "placeholders": ["STUNDEN", "THEMA", "ANZAHL"]}, {"id": 62, "title": "Handout erstellen", "cat": "PRÄSENTATION", "prompt": "Erstelle ein 1-seitiges Handout zu meiner Präsentation: [THEMA]. Inhalt: Key Takeaways (5 Punkte), wichtigste Tabelle als Textbeschreibung, weiterführende Ressourcen, Kontaktdaten.", "tip": "Das Handout lebt länger als die Präsentation.", "placeholders": ["THEMA"]}, {"id": 63, "title": "Komplexe Daten verständlich präsentieren", "cat": "PRÄSENTATION", "prompt": "Ich muss folgende komplexe Daten präsentieren: [DATEN/ZAHLEN]. Publikum: [WER]. Erstelle: 1) Vereinfachte Kernaussage (1 Satz), 2) Beste Visualisierung, 3) Verständliche Analogie, 4) Folienbeschriftung, 5) Speaker Note.", "tip": "Wenn du es nicht einfach erklären kannst, hast du es nicht verstanden.", "placeholders": ["DATEN/ZAHLEN", "WER"]}, {"id": 64, "title": "Interaktive Workshop-Übung", "cat": "PRÄSENTATION", "prompt": "Designe eine interaktive Übung für meinen Workshop: Thema: [THEMA], Teilnehmer: [ANZAHL], Zeit: [MINUTEN]. Die Übung soll praxisnah sein, alle einbinden und ein messbares Ergebnis liefern.", "tip": "Die besten Workshops haben min. 60% Interaktionszeit.", "placeholders": ["THEMA", "ANZAHL", "MINUTEN"]}, {"id": 65, "title": "Elevator Pitch formulieren", "cat": "PRÄSENTATION", "prompt": "Formuliere einen 60-Sekunden Elevator Pitch für: [PRODUKT/IDEE]. Struktur: Hook (5s), Problem (10s), Lösung (15s), Beweis (15s), CTA (15s). Erstelle 3 Varianten: Investoren, Kunden, Partner.", "tip": "Übe den Pitch laut — 60 Sekunden sind kürzer als man denkt.", "placeholders": ["PRODUKT/IDEE"]}, {"id": 66, "title": "Moderationsleitfaden", "cat": "PRÄSENTATION", "prompt": "Erstelle einen Moderationsleitfaden für [VERANSTALTUNG]. Dauer: [MINUTEN], Teilnehmer: [ANZAHL]. Begrüßungstext, Übergänge, Zeitmanagement, Umgang mit Vielrednern, Techniken bei stockender Diskussion, Abschluss.", "tip": "Gute Moderation = 80% Vorbereitung, 20% Improvisation.", "placeholders": ["VERANSTALTUNG", "MINUTEN", "ANZAHL"]}]}, {"id": "M12", "name": "Prompt Engineering Pro", "icon": "🧠", "master": true, "prompts": [{"id": 67, "title": "Few-Shot Prompting", "cat": "PROMPT-ENG", "prompt": "Ich möchte, dass du [AUFGABE] erledigst. Hier sind 3 Beispiele:\n\nBeispiel 1: Input: [X1] → Output: [Y1]\nBeispiel 2: Input: [X2] → Output: [Y2]\nBeispiel 3: Input: [X3] → Output: [Y3]\n\nNun erledige die Aufgabe für: [NEUER INPUT].", "tip": "3 Beispiele sind der Sweet Spot.", "placeholders": ["AUFGABE", "X1", "Y1", "X2", "Y2", "X3", "Y3", "NEUER INPUT"]}, {"id": 68, "title": "Chain-of-Thought erzwingen", "cat": "PROMPT-ENG", "prompt": "Löse folgendes Problem Schritt für Schritt. Zeige jeden Denkschritt explizit. Problem: [PROBLEM]. Nummeriere deine Schritte. Markiere Annahmen als [ANNAHME]. Überprüfe dein Ergebnis auf Plausibilität.", "tip": "Chain-of-Thought reduziert Fehler um bis zu 60%.", "placeholders": ["PROBLEM", "ANNAHME"]}, {"id": 69, "title": "Constrained Output", "cat": "PROMPT-ENG", "prompt": "Erstelle [OUTPUT] unter folgenden Einschränkungen: Format: [JSON / Tabelle / Markdown], Sprache: [Deutsch], Max. Länge: [WÖRTER/ZEILEN], MUSS enthalten: [ELEMENT], DARF NICHT enthalten: [ELEMENT], Zielgruppe: [WER].", "tip": "Constraints = Präzision.", "placeholders": ["OUTPUT", "WÖRTER/ZEILEN", "ELEMENT", "WER"]}, {"id": 70, "title": "Persona-Stack Prompting", "cat": "PROMPT-ENG", "prompt": "Nimm 3 Experten-Perspektiven ein:\n\nPerspektive 1: [ROLLE A]\nPerspektive 2: [ROLLE B]\nPerspektive 3: [ROLLE C]\n\nAnalysiere [THEMA] aus jeder Perspektive. Fasse Gemeinsamkeiten und Widersprüche zusammen.", "tip": "Multi-Perspektiven decken blinde Flecken auf.", "placeholders": ["ROLLE A", "ROLLE B", "ROLLE C", "THEMA"]}, {"id": 71, "title": "Meta-Prompt: Prompt optimieren", "cat": "PROMPT-ENG", "prompt": "Hier ist mein Prompt: [PROMPT EINFÜGEN]. Analysiere und verbessere ihn. Prüfe: 1) Kontext ausreichend? 2) Ziel klar? 3) Format definiert? 4) Beispiele nötig? 5) Mehrdeutigkeiten? Zeige die optimierte Version.", "tip": "KI ist der beste Prompt-Optimizer für KI.", "placeholders": ["PROMPT EINFÜGEN"]}, {"id": 72, "title": "Structured Output erzwingen", "cat": "PROMPT-ENG", "prompt": "Erstelle [INHALT] im exakten Schema:\n\ntitel: [max. 10 Wörter]\nkategorie: [aus Liste: A, B, C]\npriorität: [hoch/mittel/niedrig]\nzusammenfassung: [1 Satz]\ndetails: [3-5 Bullet Points]\naktion: [1 nächster Schritt]\n\nFülle für: [THEMA].", "tip": "Strukturierte Outputs = direkt importierbar.", "placeholders": ["INHALT", "THEMA"]}, {"id": 73, "title": "Self-Consistency Check", "cat": "PROMPT-ENG", "prompt": "Beantworte folgende Frage 3 Mal unabhängig: [FRAGE]. Nummeriere die Antworten. Vergleiche: Wo stimmen sie überein? Wo widersprechen sie sich? Gib eine finale, konsolidierte Antwort.", "tip": "Self-Consistency = Crowd-Wisdom für KI.", "placeholders": ["FRAGE"]}, {"id": 74, "title": "Negative Prompting", "cat": "PROMPT-ENG", "prompt": "Erstelle [INHALT]. VERMEIDE: 1) [UNERWÜNSCHTES], 2) [TONALITÄT], 3) [FORMAT]. STATTDESSEN: 1) [GEWÜNSCHTES], 2) [TONALITÄT], 3) [FORMAT]. Erkläre nach der Erstellung, wie du die Vorgaben umgesetzt hast.", "tip": "Was du NICHT willst ist genauso wichtig.", "placeholders": ["INHALT", "UNERWÜNSCHTES", "TONALITÄT", "FORMAT", "GEWÜNSCHTES"]}, {"id": 75, "title": "Prompt-Template mit Variablen", "cat": "PROMPT-ENG", "prompt": "Erstelle ein wiederverwendbares Prompt-Template für [AUFGABENTYP]. Verwende {{VARIABLE}} für austauschbare Teile. Variable-Liste mit: Name, Beschreibung, Beispielwert, Pflicht/Optional.", "tip": "Variable Templates skalieren — einmal erstellen, hundertfach nutzen.", "placeholders": ["AUFGABENTYP"]}, {"id": 76, "title": "Tree-of-Thought Prompting", "cat": "PROMPT-ENG", "prompt": "Analysiere mit Tree-of-Thought: [PROBLEM]. Erstelle 3+ verschiedene Lösungspfade. Bewerte jeden nach: Machbarkeit (1-5), Aufwand (1-5), Erfolgschance (1-5). Verfolge den besten Pfad im Detail.", "tip": "Tree-of-Thought schlägt Chain-of-Thought bei komplexen Entscheidungen.", "placeholders": ["PROBLEM"]}, {"id": 77, "title": "Output-Vergleich erzwingen", "cat": "PROMPT-ENG", "prompt": "Erstelle [INHALT] in 3 Qualitätsstufen: Version A: Schnell und gut (80/20). Version B: Professionell und durchdacht. Version C: Exzellent und publikationsreif. Markiere die Unterschiede.", "tip": "Manchmal reicht 80/20 — nicht alles braucht Perfektion.", "placeholders": ["INHALT"]}]}, {"id": "M13", "name": "Team-Transformation", "icon": "👥", "master": true, "prompts": [{"id": 78, "title": "KI-Einführungsplan 8 Wochen", "cat": "LEADERSHIP", "prompt": "Erstelle einen 8-Wochen-Plan zur KI-Einführung in meinem Team ([ANZAHL] Personen, [BRANCHE]). Pro Woche: Lernziel, Praxisübung, Quick Win. Berücksichtige KI-Skeptiker, Datenschutzbedenken, Change-Widerstände. Erfolgskennzahlen definieren.", "tip": "Quick Wins in Woche 1-2 erzeugen Momentum.", "placeholders": ["ANZAHL", "BRANCHE"]}, {"id": 79, "title": "Produktivitäts-Audit mit KI", "cat": "LEADERSHIP", "prompt": "Führe ein Produktivitäts-Audit für die Rolle [ROLLE] durch. Liste typische Aufgaben auf und bewerte: 1) Zeitaufwand/Woche, 2) KI-Automatisierungspotenzial (hoch/mittel/niedrig/keins), 3) Geschätzte Zeitersparnis. Berechne Gesamt-ROI.", "tip": "Typisch: 5-10 Stunden Zeitersparnis pro Mitarbeiter pro Woche.", "placeholders": ["ROLLE"]}, {"id": 80, "title": "KI-Champions-Programm", "cat": "LEADERSHIP", "prompt": "Entwirf ein KI-Champions-Programm. Struktur: 1) Auswahl-Kriterien, 2) Schulungsplan (4 Wochen), 3) Aufgaben (Peer-Coaching, Use-Case-Sammlung, Feedback-Loop), 4) Anreize, 5) Erfolgsmessung.", "tip": "Champions sind 10x effektiver als top-down Schulungen.", "placeholders": []}, {"id": 81, "title": "Change-Kommunikation KI", "cat": "LEADERSHIP", "prompt": "Erstelle einen Change-Kommunikationsplan für die KI-Einführung. Adressiere die 3 Ängste: 1) Jobverlust, 2) Überforderung, 3) Datenschutz. Pro Angst: Botschaft, Fakten, Beispiel, Ansprechpartner. Plus CEO-Ansprache (2 Min).", "tip": "Ängste ernst nehmen und mit Fakten begegnen.", "placeholders": []}, {"id": 82, "title": "Use-Case-Bibliothek erstellen", "cat": "LEADERSHIP", "prompt": "Erstelle eine Use-Case-Bibliothek mit KI-Anwendungsfällen für [BRANCHE]. Pro Use Case: Name, Abteilung, Beschreibung, Zeitersparnis, Schwierigkeitsgrad (Anfänger/Fortgeschritten/Experte), Tools. Mindestens 15 Use Cases.", "tip": "Quick Wins zuerst sortieren.", "placeholders": ["BRANCHE"]}, {"id": 83, "title": "KI-Reifegrad-Assessment", "cat": "LEADERSHIP", "prompt": "Erstelle ein Assessment für den KI-Reifegrad unserer Organisation. 20 Fragen in 5 Dimensionen: Strategie, Technologie, Daten, Kompetenzen, Kultur. Pro Frage: 4 Antwortoptionen (Level 1-4). Auswertungslogik und Empfehlungen.", "tip": "KI-Reifegrad ist der Startpunkt jeder Transformation.", "placeholders": []}, {"id": 84, "title": "Schulungsbedarfs-Analyse", "cat": "LEADERSHIP", "prompt": "Erstelle eine Schulungsbedarfs-Analyse für KI-Kompetenzen. Zielgruppen: 1) Geschäftsführung, 2) Teamleiter, 3) Fachkräfte, 4) Auszubildende. Pro Gruppe: Kompetenzen, aktueller Stand, Gap-Analyse, Schulungsmaßnahmen, Priorität.", "tip": "GL braucht Strategie-Kompetenz, nicht Prompt-Kenntnisse.", "placeholders": []}, {"id": 85, "title": "Widerstands-Management", "cat": "LEADERSHIP", "prompt": "Analysiere typische Widerstände bei KI-Einführung in [ABTEILUNG]. Pro Widerstand: 1) Ursache, 2) Sichtbares Verhalten, 3) Gegenmaßnahme, 4) Gesprächsleitfaden für Führungskräfte. Priorisiere nach Häufigkeit.", "tip": "Widerstand zeigt, dass Menschen das Thema ernst nehmen.", "placeholders": ["ABTEILUNG"]}, {"id": 86, "title": "KI-Erfolgsmessung im Team", "cat": "LEADERSHIP", "prompt": "Entwickle ein Messsystem für KI-Erfolg in unserem Team ([ANZAHL] Personen). Quantitative KPIs (Zeitersparnis, Output), Qualitative KPIs (Zufriedenheit, Kompetenz), Erhebungsmethode, Baseline, Ziele nach 3/6/12 Monaten.", "tip": "Ohne Baseline kann man keinen Fortschritt nachweisen.", "placeholders": ["ANZAHL"]}, {"id": 87, "title": "Mentoring-Programm für KI", "cat": "LEADERSHIP", "prompt": "Entwirf ein Peer-Mentoring-Programm für KI-Kompetenzen. Matching-Kriterien, Dauer, Agenda für 4 Sessions, Ressourcen, Feedback-Mechanismus, Zertifikat am Ende.", "tip": "Peer-Learning ist 3x nachhaltiger als Frontalschulungen.", "placeholders": []}, {"id": 88, "title": "Best-Practice-Sharing Format", "cat": "LEADERSHIP", "prompt": "Erstelle ein monatliches KI-Best-Practice-Sharing Format. Einreichungsformular (5 Felder), Bewertungskriterien, Präsentationsformat (5 Min/Case), Dokumentation, Gamification/Anreize.", "tip": "Peer-Erfahrungen überzeugen mehr als Expertenwissen.", "placeholders": []}]}, {"id": "M14", "name": "Zukunftsstrategie", "icon": "🔮", "master": true, "prompts": [{"id": 89, "title": "KI-Strategie 12 Monate", "cat": "ZUKUNFT", "prompt": "Entwickle eine KI-Strategie für [UNTERNEHMEN]: [BRANCHE], [GRÖSSE], [AKTUELLE KI-NUTZUNG]. 12 Monate Horizont. Vision (1 Satz), 3 strategische Ziele, 5 Initiativen mit Timeline, Ressourcenbedarf, KPIs, Quick Wins für 30 Tage.", "tip": "Ohne Quick Wins verliert eine Strategie nach 6 Wochen das Momentum.", "placeholders": ["UNTERNEHMEN", "BRANCHE", "GRÖSSE", "AKTUELLE KI-NUTZUNG"]}, {"id": 90, "title": "Zukunftsszenarien entwickeln", "cat": "ZUKUNFT", "prompt": "Entwickle 3 Zukunftsszenarien für [BRANCHE] im KI-Kontext: 1) Best Case (Vorreiter), 2) Business as Usual, 3) Worst Case (Nachzügler). Pro Szenario: Beschreibung, Wahrscheinlichkeit, Auswirkungen auf Umsatz/Mitarbeiter/Marktposition.", "tip": "Szenario-Planung macht Unsicherheit handhabbar.", "placeholders": ["BRANCHE"]}, {"id": 91, "title": "KI-Governance-Framework", "cat": "ZUKUNFT", "prompt": "Erstelle ein KI-Governance-Framework. Ethik-Board (Zusammensetzung), Genehmigungsprozess, Risikoklassifizierung (EU AI Act konform), Monitoring und Audit, Eskalationspfade, Reporting an GL.", "tip": "Governance = Vertrauen. Ohne Governance kein nachhaltiger KI-Einsatz.", "placeholders": []}, {"id": 92, "title": "Innovationspipeline aufbauen", "cat": "ZUKUNFT", "prompt": "Entwirf eine KI-Innovationspipeline für [UNTERNEHMEN]. Phasen: 1) Ideation, 2) Evaluation (Machbarkeit + Business Case), 3) Pilotierung (MVP in 4 Wochen), 4) Skalierung. Pro Phase: Methoden, Kriterien, Verantwortliche, Go/No-Go.", "tip": "Fail fast, learn fast.", "placeholders": ["UNTERNEHMEN"]}, {"id": 93, "title": "Kompetenz-Roadmap 2026+", "cat": "ZUKUNFT", "prompt": "Erstelle eine Kompetenz-Roadmap für KI-Skills 2026-2028. 3 Level: Basic (alle MA), Advanced (Poweruser), Expert (KI-Team). Pro Level: Lernziele, Ressourcen, Zertifizierungen, Zeitaufwand. Verknüpfe mit Karrierepfaden.", "tip": "KI-Kompetenz = wichtigste Weiterbildung der nächsten Dekade.", "placeholders": []}, {"id": 94, "title": "ROI-Berechnung KI-Investition", "cat": "ZUKUNFT", "prompt": "Erstelle eine ROI-Berechnung für: [TOOL/SCHULUNG/PROJEKT]. Kosten: [EINMALIG + LAUFEND]. Nutzen: Zeitersparnis, Qualitätssteigerung, Fehlerreduktion, Mitarbeiterzufriedenheit. Break-Even und 3-Jahres-ROI berechnen.", "tip": "ROI = Sprache der Geschäftsführung. Immer in Euro rechnen.", "placeholders": ["TOOL/SCHULUNG/PROJEKT"]}, {"id": 95, "title": "Wettbewerbsvorteil durch KI", "cat": "ZUKUNFT", "prompt": "Analysiere KI als Wettbewerbsvorteil für [UNTERNEHMEN] in [BRANCHE]. VRIO-Analyse, Datenvorteile, Prozessvorteile, Kundenvorteile. Leite 3 strategische Empfehlungen ab.", "tip": "KI allein ist kein Vorteil — die Kombination mit Daten und Prozessen schon.", "placeholders": ["UNTERNEHMEN", "BRANCHE"]}, {"id": 96, "title": "KI-Budget planen", "cat": "ZUKUNFT", "prompt": "Erstelle eine KI-Budgetplanung für [UNTERNEHMEN]. Kategorien: 1) Tools & Lizenzen, 2) Schulung, 3) Beratung/Implementierung, 4) Interne Ressourcen. Pro Kategorie: Kostenrahmen, Priorität, ROI. Management-Vorlage zur Budgetfreigabe.", "tip": "KI-Budget immer mit Business Case verknüpfen.", "placeholders": ["UNTERNEHMEN"]}, {"id": 97, "title": "Technologie-Radar KI", "cat": "ZUKUNFT", "prompt": "Erstelle einen KI-Technologie-Radar für [BRANCHE]. Vier Ringe: 1) ADOPT (sofort), 2) TRIAL (pilot), 3) ASSESS (evaluieren), 4) HOLD (beobachten). Pro Ring: 3-5 Tools/Technologien mit Kurzbewertung.", "tip": "Tech-Radar hilft, Hype von echtem Nutzen zu unterscheiden.", "placeholders": ["BRANCHE"]}, {"id": 98, "title": "Nachhaltigkeitsstrategie mit KI", "cat": "ZUKUNFT", "prompt": "Wie kann KI unsere Nachhaltigkeitsziele unterstützen? Dimensionen: 1) Energieeffizienz, 2) Ressourcenoptimierung, 3) Lieferketten-Transparenz, 4) ESG-Reporting. Pro Dimension: Use Case, Wirkung, Aufwand.", "tip": "KI + Nachhaltigkeit = doppelter Innovationshebel.", "placeholders": []}, {"id": 99, "title": "Zukunftssichere Stellenprofile", "cat": "ZUKUNFT", "prompt": "Entwickle zukunftssichere Stellenprofile für [3-5 ROLLEN]. Pro Rolle: Aktuelle Aufgaben, KI-automatisierbare Anteile, neue Aufgaben durch KI, benötigte Zusatzkompetenzen, Weiterbildung. Wandel als Chance darstellen.", "tip": "Rollen verändern sich — aber verschwinden selten komplett.", "placeholders": []}]}];
+
+// ═══ ANNOUNCE ═══
+function announce(msg) {
+  const el = document.getElementById('liveAnnounce');
+  el.textContent = '';
+  requestAnimationFrame(() => { el.textContent = msg; });
+}
+
+// ═══ SIDEBAR TOGGLE (mobile) ═══
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const btn = document.querySelector('.mobile-toggle');
+  const bd = document.getElementById('sidebarBackdrop');
+  const open = sb.classList.toggle('open');
+  bd.classList.toggle('open', open);
+  btn.setAttribute('aria-expanded', open);
+  btn.setAttribute('aria-label', open ? 'Navigation schließen' : 'Navigation öffnen');
+  if (open) sb.querySelector('#searchInput').focus();
+}
+
+// ═══ DARK/LIGHT MODE ═══
+const DARK_THEMES = ['neon', 'midnight'];
+const LIGHT_THEMES = ['light', 'paper'];
+const THEME_PAIRS = { neon: 'light', midnight: 'paper', light: 'neon', paper: 'midnight' };
+
+function updateModeAttr() {
+  const theme = document.body.getAttribute('data-theme');
+  const mode = DARK_THEMES.includes(theme) ? 'dark' : 'light';
+  document.body.setAttribute('data-mode', mode);
+}
+
+// ═══ THEME ═══
+function setTheme(t) {
+  document.body.setAttribute('data-theme', t);
+  document.querySelectorAll('.theme-btn').forEach(b => {
+    const isActive = b.dataset.t === t;
+    b.classList.toggle('active', isActive);
+    b.setAttribute('aria-checked', isActive);
+  });
+  updateModeAttr();
+  announce('Design gewechselt: ' + {neon:'Neon Terminal',light:'Clean White',paper:'Warm Paper',midnight:'Midnight Blue'}[t]);
+  try { localStorage.setItem('pt-theme', t); } catch(e) {}
+}
+try { const saved = localStorage.getItem('pt-theme'); if (saved) setTheme(saved); } catch(e) {}
+updateModeAttr();
+
+function toggleMode() {
+  const current = document.body.getAttribute('data-theme');
+  const paired = THEME_PAIRS[current] || 'neon';
+  setTheme(paired);
+  const newMode = document.body.getAttribute('data-mode');
+  announce('Modus: ' + (newMode === 'dark' ? 'Dunkel' : 'Hell'));
+}
+
+// ═══ ZOOM ═══
+const ZOOM_STEPS = [0.8, 0.9, 1, 1.1, 1.2, 1.3];
+let zoomIdx = 2; // default 1 = 100%
+
+function changeZoom(delta) {
+  if (delta !== 0) zoomIdx = Math.max(0, Math.min(ZOOM_STEPS.length - 1, zoomIdx + (delta > 0 ? 1 : -1)));
+  const z = ZOOM_STEPS[zoomIdx];
+  document.getElementById('main-content').setAttribute('data-zoom', z);
+  document.getElementById('zoomLabel').textContent = Math.round(z * 100) + '%';
+  if (delta !== 0) announce('Zoom: ' + Math.round(z * 100) + '%');
+  try { localStorage.setItem('pt-zoom', zoomIdx); } catch(e) {}
+}
+try {
+  const savedZoom = parseInt(localStorage.getItem('pt-zoom'));
+  if (savedZoom >= 0 && savedZoom < ZOOM_STEPS.length) { zoomIdx = savedZoom; changeZoom(0); }
+} catch(e) {}
+
+// ═══ RENDER NAV ═══
+function renderNav(activeId) {
+  const nav = document.getElementById('navList');
+  nav.innerHTML = MODULES.map(m => `
+    <li role="presentation">
+      <button class="sb-module ${m.id === activeId ? 'active' : ''} ${m.master ? 'is-master' : ''}" 
+          role="tab" aria-selected="${m.id === activeId}" aria-controls="main-content"
+          data-mod="${m.id}"
+          onclick="renderModule('${m.id}'); document.querySelector('.sidebar').classList.remove('open'); document.querySelector('.mobile-toggle').setAttribute('aria-expanded','false');">
+        <span class="sb-icon" aria-hidden="true">${m.icon}</span>
+        <span>${m.name}</span>
+        <span class="sb-num" aria-label="${m.prompts.length} Prompts">${m.prompts.length}</span>
+      </button>
+    </li>
+  `).join('');
+
+  // Arrow key navigation
+  const tabs = nav.querySelectorAll('[role="tab"]');
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('keydown', e => {
+      let next;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { next = tabs[(i + 1) % tabs.length]; e.preventDefault(); }
+      else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { next = tabs[(i - 1 + tabs.length) % tabs.length]; e.preventDefault(); }
+      else if (e.key === 'Home') { next = tabs[0]; e.preventDefault(); }
+      else if (e.key === 'End') { next = tabs[tabs.length - 1]; e.preventDefault(); }
+      if (next) { next.focus(); next.click(); }
+    });
+  });
+}
+
+// ═══ ESCAPE HELPER ═══
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══ PREVIEW BUILD ═══
+function buildPreview(promptText, cardId) {
+  return promptText.replace(/\[([A-ZÄÖÜ][A-ZÄÖÜ0-9\s\/\-\.,:&]+?)\]/g, (match, name) => {
+    const inputId = 'inp-' + cardId + '-' + name.replace(/[^a-zA-Z0-9]/g, '_');
+    const el = document.getElementById(inputId);
+    const val = el ? el.value.trim() : '';
+    if (val) return '<span class="filled" role="mark">' + escHtml(val) + '</span>';
+    return '<span class="ph">[' + escHtml(name) + ']</span>';
+  });
+}
+
+function getPlainPrompt(promptText, cardId) {
+  return promptText.replace(/\[([A-ZÄÖÜ][A-ZÄÖÜ0-9\s\/\-\.,:&]+?)\]/g, (match, name) => {
+    const inputId = 'inp-' + cardId + '-' + name.replace(/[^a-zA-Z0-9]/g, '_');
+    const el = document.getElementById(inputId);
+    const val = el ? el.value.trim() : '';
+    return val || match;
+  });
+}
+
+// ═══ PROMPT CARD HTML ═══
+function promptCardHTML(p, mod) {
+  const cid = p.id;
+  const num = String(cid + 1).padStart(2, '0');
+  const headerId = 'ph-' + cid;
+  const panelId = 'pp-' + cid;
+
+  const fields = p.placeholders.map(ph => {
+    const iid = 'inp-' + cid + '-' + ph.replace(/[^a-zA-Z0-9]/g, '_');
+    return `<div class="field-group">
+      <label class="field-label" for="${iid}">${escHtml(ph)}</label>
+      <input class="field-input" id="${iid}" type="text" 
+             placeholder="${escHtml(ph)} eingeben…" 
+             oninput="updatePreview(${cid})"
+             autocomplete="off">
+    </div>`;
+  }).join('');
+
+  return `<article class="prompt-card" aria-expanded="false" id="card-${cid}">
+    <button class="pc-header" id="${headerId}" 
+            aria-expanded="false" aria-controls="${panelId}"
+            onclick="toggleCard(${cid})">
+      <div class="pc-left">
+        <span class="pc-idx" aria-hidden="true">#${num}</span>
+        <div>
+          <div class="pc-title">${escHtml(p.title)}</div>
+          <div class="pc-cat">${escHtml(p.cat)}${mod ? ' · ' + escHtml(mod.name) : ''}</div>
+        </div>
+      </div>
+      <span class="pc-toggle" aria-hidden="true">+</span>
+    </button>
+    <div class="pc-body" id="${panelId}" role="region" aria-labelledby="${headerId}" hidden>
+      ${fields ? '<div style="font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;color:var(--text-dim);text-transform:uppercase;font-weight:700;margin-bottom:10px;">Platzhalter ausfüllen:</div>' : ''}
+      <div class="pc-fields">${fields}</div>
+      <div class="pc-preview-wrap">
+        <div class="pc-preview-label" style="font-family:var(--font-mono);font-size:11px;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;font-weight:700;margin-bottom:8px;">Dein fertiger Prompt:</div>
+        <div class="pc-preview" id="preview-${cid}" aria-label="Fertiger Prompt"></div>
+      </div>
+      <button class="pc-copy" aria-label="Fertigen Prompt kopieren" onclick="copyPrompt(${cid}, this, event)">FERTIGEN PROMPT KOPIEREN</button>
+      <div class="pc-tip" role="note">
+        <span class="pc-tip-icon" aria-hidden="true">💡</span>
+        <span>${escHtml(p.tip)}</span>
+      </div>
+    </div>
+  </article>`;
+}
+
+// ═══ RENDER MODULE ═══
+function renderModule(modId) {
+  const mod = MODULES.find(m => m.id === modId);
+  if (!mod) return;
+  renderNav(modId);
+  
+  const container = document.getElementById('mainContent');
+  let html = `<header class="module-header">
+    <div class="mh-num">MODUL ${mod.id.replace('M','')}</div>
+    <h2 class="mh-title">${mod.icon} ${mod.name}</h2>
+    ${mod.master ? '<div class="mh-master">★ MASTER EDITION EXKLUSIV</div>' : ''}
+    <div class="mh-count">${mod.prompts.length} Prompts — Platzhalter ausfüllen & kopieren</div>
+  </header>
+  <div role="list" aria-label="Prompts in ${escHtml(mod.name)}">`;
+  
+  mod.prompts.forEach(p => { html += promptCardHTML(p, null); });
+  
+  html += `</div>
+  <footer class="app-footer" role="contentinfo">
+    <p>&copy; 2024–2026 Gerd Zimmermann / GZ-AI.-Stacks · AI Ready Masterclass</p>
+    <p>&bdquo;Claude&ldquo; ist eine eingetragene Marke der Anthropic, PBC. Unabh&auml;ngiges Lernmaterial &mdash; keine Verbindung zu Anthropic.</p>
+    <p style="margin-top:6px">Die Prompt-Vorlagen in diesem Generator wurden mit Unterst&uuml;tzung von KI erstellt und redaktionell gepr&uuml;ft.</p>
+    <p style="margin-top:8px"><a href="#" onclick="openLegal('impressum');return false" style="color:var(--text-dim);text-decoration:underline">Impressum</a> · <a href="#" onclick="openLegal('datenschutz');return false" style="color:var(--text-dim);text-decoration:underline">Datenschutz</a></p>
+  </footer>`;
+  
+  container.innerHTML = html;
+  window.scrollTo(0, 0);
+  announce('Modul ' + mod.id.replace('M','') + ': ' + mod.name + ', ' + mod.prompts.length + ' Prompts');
+}
+
+// ═══ TOGGLE CARD ═══
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  const header = card.querySelector('.pc-header');
+  const panel = card.querySelector('.pc-body');
+  const isOpen = header.getAttribute('aria-expanded') === 'true';
+  
+  // Close all others in this module
+  card.parentElement.querySelectorAll('.prompt-card').forEach(c => {
+    if (c !== card) {
+      c.setAttribute('aria-expanded', 'false');
+      c.querySelector('.pc-header').setAttribute('aria-expanded', 'false');
+      c.querySelector('.pc-body').hidden = true;
+    }
+  });
+  
+  // Toggle current
+  const newState = !isOpen;
+  card.setAttribute('aria-expanded', newState);
+  header.setAttribute('aria-expanded', newState);
+  panel.hidden = !newState;
+  
+  if (newState) {
+    updatePreview(id);
+    // Focus first input field
+    const firstInput = panel.querySelector('.field-input');
+    if (firstInput) setTimeout(() => firstInput.focus(), 50);
+  }
+}
+
+// ═══ UPDATE PREVIEW ═══
+function updatePreview(id) {
+  const p = findPrompt(id);
+  if (!p) return;
+  const el = document.getElementById('preview-' + id);
+  if (!el) return;
+  el.innerHTML = buildPreview(p.prompt, id);
+}
+
+// ═══ COPY ═══
+function copyPrompt(id, btn, e) {
+  e.stopPropagation();
+  const p = findPrompt(id);
+  if (!p) return;
+  const text = getPlainPrompt(p.prompt, id);
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ PROMPT KOPIERT!';
+    btn.classList.add('copied');
+    announce('Prompt in Zwischenablage kopiert');
+    setTimeout(() => { btn.textContent = 'FERTIGEN PROMPT KOPIEREN'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✓ PROMPT KOPIERT!';
+    btn.classList.add('copied');
+    announce('Prompt in Zwischenablage kopiert');
+    setTimeout(() => { btn.textContent = 'FERTIGEN PROMPT KOPIEREN'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function findPrompt(id) {
+  for (const m of MODULES) {
+    const p = m.prompts.find(p => p.id === id);
+    if (p) return p;
+  }
+  return null;
+}
+
+// ═══ SEARCH ═══
+let searchTimeout;
+function filterPrompts(query) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => { doSearch(query); }, 200);
+}
+
+function doSearch(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) { renderModule(MODULES[0].id); return; }
+  
+  const container = document.getElementById('mainContent');
+  let html = `<header class="module-header">
+    <div class="mh-num">SUCHERGEBNIS</div>
+    <h2 class="mh-title">Suche: „${escHtml(query)}"</h2>
+  </header>
+  <div role="list" aria-label="Suchergebnisse">`;
+  let count = 0;
+  
+  MODULES.forEach(mod => {
+    mod.prompts.forEach(p => {
+      if (p.title.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q) || p.prompt.toLowerCase().includes(q)) {
+        count++;
+        html += promptCardHTML(p, mod);
+      }
+    });
+  });
+  
+  if (count === 0) {
+    html += `<div class="no-results" role="status">
+      <div class="no-results-icon" aria-hidden="true">🔍</div>
+      <div class="no-results-text">Kein Prompt gefunden für „${escHtml(query)}"</div>
+    </div>`;
+  }
+  
+  html += '</div>';
+  container.innerHTML = html;
+  renderNav(null);
+  announce(count > 0 ? count + ' Ergebnisse gefunden' : 'Keine Ergebnisse gefunden');
+}
+
+// ═══ KEYBOARD: Escape closes sidebar on mobile ═══
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const sb = document.getElementById('sidebar');
+    if (sb.classList.contains('open')) {
+      sb.classList.remove('open');
+      document.querySelector('.mobile-toggle').setAttribute('aria-expanded', 'false');
+      document.querySelector('.mobile-toggle').focus();
+    }
+  }
+});
+
+// ═══ INIT ═══
+renderModule(MODULES[0].id);
+
+// ═══ LEGAL MODALS ═══
+var _legalTrigger=null;
+function openLegal(id){
+  _legalTrigger=document.activeElement;
+  var el=document.getElementById('legal-'+id);
+  el.classList.add('open');
+  el.setAttribute('aria-hidden','false');
+  var btn=el.querySelector('.legal-close');
+  if(btn)btn.focus();
+  document.body.style.overflow='hidden';
+}
+function closeLegal(id){
+  var el=document.getElementById('legal-'+id);
+  el.classList.remove('open');
+  el.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+  if(_legalTrigger){_legalTrigger.focus();_legalTrigger=null;}
+}
+document.addEventListener('keydown',function(e){
+  var open=document.querySelector('.legal-overlay.open');
+  if(!open)return;
+  var id=open.id.replace('legal-','');
+  if(e.key==='Escape'){closeLegal(id);return;}
+  if(e.key==='Tab'){
+    var focusable=open.querySelectorAll('a[href],button:not([disabled])');
+    if(!focusable.length)return;
+    var first=focusable[0],last=focusable[focusable.length-1];
+    if(e.shiftKey){if(document.activeElement===first){e.preventDefault();last.focus();}}
+    else{if(document.activeElement===last){e.preventDefault();first.focus();}}
+  }
+});
+</script>
+
+<div class="legal-overlay" id="legal-impressum" aria-hidden="true" onclick="if(event.target===this)closeLegal('impressum')">
+<div class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="legal-impressum-title">
+<button class="legal-close" onclick="closeLegal('impressum')" aria-label="Schlie&szlig;en">&times;</button>
+<h1 id="legal-impressum-title">Impressum</h1>
+<h2>Angaben gem&auml;&szlig; &sect;5 DDG</h2>
+<p><strong>Gerd Zimmermann</strong></p>
+<p>GZ-AI.-Stacks &mdash; Zimmermann AI Systems</p>
+<p>G&ouml;rlitzer Stra&szlig;e 10</p>
+<p>91315 H&ouml;chstadt an der Aisch</p>
+<p>Deutschland</p>
+<h2>Kontakt</h2>
+<p>Telefon: 0151 177 37 336</p>
+<p>E-Mail: <a href="mailto:gz.ai.stacks@gmail.com">gz.ai.stacks@gmail.com</a></p>
+<h2>Verantwortlich f&uuml;r den Inhalt gem&auml;&szlig; &sect;18 Abs. 2 MStV</h2>
+<p>Gerd Zimmermann</p>
+<p>G&ouml;rlitzer Stra&szlig;e 10, 91315 H&ouml;chstadt an der Aisch</p>
+<h2>EU-Streitschlichtung</h2>
+<p>Die Europ&auml;ische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr/</a></p>
+<h2>Verbraucherstreitbeilegung</h2>
+<p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+<div class="legal-ref">
+<p>Dieses Impressum gilt f&uuml;r den AI&nbsp;Ready Prompt-Generator Starter&nbsp;Edition und Master&nbsp;Edition.</p>
+<p style="margin-top:6px">&bdquo;Claude&ldquo; ist eine eingetragene Marke der Anthropic, PBC. Dieses Angebot ist ein unabh&auml;ngiges Lernmaterial und steht in keiner gesch&auml;ftlichen Verbindung zu Anthropic. Es wird weder von Anthropic gesponsert, empfohlen noch zertifiziert.</p>
+</div>
+</div>
+</div>
+
+<div class="legal-overlay" id="legal-datenschutz" aria-hidden="true" onclick="if(event.target===this)closeLegal('datenschutz')">
+<div class="legal-modal" role="dialog" aria-modal="true" aria-labelledby="legal-datenschutz-title">
+<button class="legal-close" onclick="closeLegal('datenschutz')" aria-label="Schlie&szlig;en">&times;</button>
+<h1 id="legal-datenschutz-title">Datenschutzerkl&auml;rung</h1>
+<h2>1. Verantwortlicher</h2>
+<p>Gerd Zimmermann · GZ-AI.-Stacks &mdash; Zimmermann AI Systems<br>G&ouml;rlitzer Stra&szlig;e 10, 91315 H&ouml;chstadt an der Aisch<br>E-Mail: <a href="mailto:gz.ai.stacks@gmail.com">gz.ai.stacks@gmail.com</a> · Tel: 0151 177 37 336</p>
+<h2>2. Datenverarbeitung</h2>
+<p>Der AI&nbsp;Ready Prompt-Generator ist eine rein clientseitige Webanwendung. <strong>Alle Eingaben</strong> (Platzhalter-Werte, Einstellungen) werden ausschlie&szlig;lich lokal in Ihrem Browser verarbeitet und gespeichert (LocalStorage). Es werden <strong>keine personenbezogenen Daten</strong> an unsere Server &uuml;bermittelt.</p>
+<h2>3. Hosting</h2>
+<p>Diese Webseite wird &uuml;ber <strong>Netlify, Inc.</strong> (San Francisco, USA) gehostet. Beim Aufruf werden technische Daten (IP-Adresse, Browser-Typ, Zeitstempel) &uuml;bertragen. Rechtsgrundlage: Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO. Angemessenheitsbeschluss: EU-US Data Privacy Framework.</p>
+<h2>4. Cookies und LocalStorage</h2>
+<p>Diese Webseite verwendet <strong>keine Cookies</strong>. Der LocalStorage speichert Einstellungen (z.&nbsp;B. Farbschema) ausschlie&szlig;lich lokal. Diese Daten verlassen Ihren Browser nicht.</p>
+<h2>5. Tracking</h2>
+<p>Es werden <strong>keine Analyse-Tools, Tracker oder Pixel</strong> eingesetzt.</p>
+<h2>6. Externe Inhalte</h2>
+<p>Es werden <strong>keine externen Ressourcen</strong> von Drittanbietern nachgeladen.</p>
+<h2>7. Ihre Rechte (Art. 15&ndash;21 DSGVO)</h2>
+<p>Auskunft, Berichtigung, L&ouml;schung, Einschr&auml;nkung, Daten&uuml;bertragbarkeit, Widerspruch. Kontakt: <a href="mailto:gz.ai.stacks@gmail.com">gz.ai.stacks@gmail.com</a></p>
+<h2>8. Beschwerderecht</h2>
+<p>Bayerisches Landesamt f&uuml;r Datenschutzaufsicht (BayLDA)<br>Promenade 18, 91522 Ansbach · <a href="https://www.lda.bayern.de" target="_blank" rel="noopener">www.lda.bayern.de</a></p>
+<h2>9. KI-Transparenzhinweis</h2>
+<p>Die Prompt-Vorlagen wurden mit Unterst&uuml;tzung von KI erstellt und redaktionell gepr&uuml;ft. Bei der Nutzung werden <strong>keine Daten an KI-Dienste &uuml;bertragen</strong>.</p>
+<div class="legal-ref">
+<p>Stand: M&auml;rz 2026 · Gilt f&uuml;r den AI&nbsp;Ready Prompt-Generator Starter&nbsp;Edition und Master&nbsp;Edition.</p>
+</div>
+</div>
+</div>
+
+</body>
+</html>
