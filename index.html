@@ -3062,6 +3062,8 @@ document.getElementById('fileLoadInput').addEventListener('change',handleFileLoa
 // ═══════════════ NAME MODAL ═══════════════
 const nI=document.getElementById('nameInput'),nS=document.getElementById('nameSubmit');
 nI.addEventListener('input',()=>{nS.disabled=nI.value.trim().length<2});
+nI.addEventListener('change',()=>{nS.disabled=nI.value.trim().length<2});
+setTimeout(()=>{nS.disabled=nI.value.trim().length<2},400);
 nI.addEventListener('keydown',e=>{if(e.key==='Enter'&&nI.value.trim().length>=2)startCourse()});
 nS.addEventListener('click',startCourse);
 function startCourse(){userName=nI.value.trim();if(userName.length<2)return;document.getElementById('nameModal').classList.add('hidden');document.getElementById('sidebarName').textContent=userName;courseStartTime=Date.now();renderSidebar();renderModule(0);saveProgress();trackEvent('course_0x2ddc9carted')}
